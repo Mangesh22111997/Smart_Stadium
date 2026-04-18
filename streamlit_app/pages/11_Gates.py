@@ -1,0 +1,41 @@
+"""
+Gates Management Page
+"""
+
+import streamlit as st
+from utils.session_manager import SessionManager
+from utils.api_client import get_api_client
+
+st.set_page_config(page_title="Gates - Admin", page_icon="🚪", layout="wide")
+
+if not SessionManager.is_logged_in() or not SessionManager.is_admin():
+    st.error("❌ Admin access required")
+    st.stop()
+
+st.markdown("# 🚪 Gate Management")
+
+if st.button("🚪 Logout"):
+    api_client = get_api_client()
+    api_client.logout(SessionManager.get_session_token())
+    SessionManager.logout()
+    st.switch_page("pages/1_Login.py")
+
+st.divider()
+
+gates = ['Gate A', 'Gate B', 'Gate C', 'Gate D', 'Gate E']
+
+for i, gate in enumerate(gates):
+    col1, col2, col3, col4 = st.columns([0.4, 0.2, 0.2, 0.2])
+    
+    with col1:
+        st.markdown(f"### {gate}")
+    with col2:
+        status = st.selectbox(f"Status", ["Open", "Closed", "Restricted"], key=f"gate_status_{i}")
+    with col3:
+        crowd = st.slider(f"Crowd %", 0, 100, 45, key=f"gate_crowd_{i}")
+    with col4:
+        if st.button("Update", key=f"gate_update_{i}"):
+            st.success(f"✅ {gate} updated")
+
+if st.button("📊 Back to Dashboard"):
+    st.switch_page("pages/9_Admin_Dashboard.py")
