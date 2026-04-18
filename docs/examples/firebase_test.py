@@ -3,15 +3,21 @@
 
 import pyrebase
 
+import os
+from dotenv import load_dotenv
+
+# Load .env file
+load_dotenv()
+
 firebaseConfig = {
-  'apiKey': "AIzaSyCcanmGKxtXCawn0EML0bpL6LgmI1p2CiE",
-  'authDomain': "smart-stadium-system-db.firebaseapp.com",
-  'databaseURL': "https://smart-stadium-system-db-default-rtdb.asia-southeast1.firebasedatabase.app",
-  'projectId': "smart-stadium-system-db",
-  'storageBucket': "smart-stadium-system-db.firebasestorage.app",
-  'messagingSenderId': "771554077981",
-  'appId': "1:771554077981:web:2b627c9f72edb53a5245f4",
-  'measurementId': "G-BBJBX9TCCH"
+  'apiKey': os.getenv("FIREBASE_API_KEY"),
+  'authDomain': os.getenv("FIREBASE_AUTH_DOMAIN"),
+  'databaseURL': os.getenv("FIREBASE_DATABASE_URL"),
+  'projectId': os.getenv("FIREBASE_PROJECT_ID"),
+  'storageBucket': os.getenv("FIREBASE_STORAGE_BUCKET"),
+  'messagingSenderId': os.getenv("FIREBASE_MESSAGING_SENDER_ID"),
+  'appId': os.getenv("FIREBASE_APP_ID"),
+  'measurementId': os.getenv("FIREBASE_MEASUREMENT_ID")
 }
 
 firebase = pyrebase.initialize_app(firebaseConfig)
