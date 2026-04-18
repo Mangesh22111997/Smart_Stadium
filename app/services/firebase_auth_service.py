@@ -19,6 +19,7 @@ class FirebaseAuthService:
     # Database paths
     USERS_PATH = "users"
     ADMINS_PATH = "admins"
+    SECURITY_STAFF_PATH = "security_staff"
     ACTIVE_SESSIONS_PATH = "active_sessions"
     
     @staticmethod
@@ -386,6 +387,84 @@ class FirebaseAuthService:
             
         except Exception as e:
             logger.error(f"❌ Admin login failed: {str(e)}")
+            raise
+    
+    @staticmethod
+    def security_login(username: str, password: str) -> Dict[str, Any]:
+        """
+        Authenticate security staff
+        
+        Args:
+            username: Security staff username
+            password: Security staff password
+            
+        Returns:
+            Security staff data with session token if successful
+        """
+        try:
+            db = get_db_connection()
+            
+            # Find security staff by username
+            staff = db.child(FirebaseAuthService.SECURITY_STAFF_PATH).get()
+            if not staff.val():
+                raise ValueError("Security staff username or password incorrect")
+            
+            staff_found = None
+            staff_id = None
+            
+            for sid, staff_data in staff.val().items():
+                if staff_data.get('username') == username:
+                    staff_found = staff_data
+                    staff_id = sid
+                    break
+            
+            if not staff_found:
+                raise ValueError("Security staff username or password incorrect")
+            
+            # Verify password
+            if not FirebaseAuthService.verify_password(password, staff_found.get('password_hash')):
+                raise ValueError("Security staff username or password incorrect")
+            
+            if not staff_found.get('is_active'):
+                raise ValueError("Security staff account is inactive")
+            
+            # Update last login
+            db.child(FirebaseAuthService.SECURITY_STAFF_PATH).child(staff_id).update({
+                "last_login": datetime.now().isoformat(),
+                "updated_at": datetime.now().isoformat()
+            })
+            
+            # Create session
+            session_token = hashlib.sha256(
+                f"security_{staff_id}{datetime.now().isoformat()}".encode()
+            ).hexdigest()
+            
+            db.child(FirebaseAuthService.ACTIVE_SESSIONS_PATH).child(session_token).set({
+                "staff_id": staff_id,
+                "username": username,
+                "email": staff_found.get('email'),
+                "role": staff_found.get('role'),
+                "login_time": datetime.now().isoformat(),
+                "is_security": True,
+                "permissions": staff_found.get('permissions')
+            })
+            
+            logger.info(f"✅ Security staff logged in: {username}")
+            print(f"✅ Security staff logged in: {username}")
+            
+            return {
+                "staff_id": staff_id,
+                "username": username,
+                "email": staff_found.get('email'),
+                "name": staff_found.get('name'),
+                "role": staff_found.get('role'),
+                "session_token": session_token,
+                "login_time": datetime.now().isoformat(),
+                "permissions": staff_found.get('permissions')
+            }
+            
+        except Exception as e:
+            logger.error(f"❌ Security staff login failed: {str(e)}")
             raise
     
     @staticmethod

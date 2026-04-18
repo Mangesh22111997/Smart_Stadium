@@ -33,4 +33,4 @@ st.markdown("### Notification History")
 st.write("No more notifications")
 
 if st.button("🏠 Back to Home"):
-    st.switch_page("pages/3_Home.py")
+    st.switch_page("pages/01_home.py")

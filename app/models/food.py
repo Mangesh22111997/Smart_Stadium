@@ -57,7 +57,7 @@ class FoodOrderRequest(BaseModel):
     Model for food order request
     """
     user_id: UUID
-    ticket_id: UUID
+    ticket_id: Optional[UUID] = None
     items: List[OrderItem] = Field(..., min_items=1)
     delivery_zone: str = Field(
         default="center",
@@ -100,9 +100,9 @@ class FoodOrderResponse(BaseModel):
     """
     Model for food order response
     """
-    order_id: UUID
+    order_id: str
     user_id: UUID
-    ticket_id: UUID
+    ticket_id: Optional[UUID] = None
     items: List[OrderItem]
     booth_id: str
     delivery_zone: str
@@ -114,7 +114,7 @@ class FoodOrderResponse(BaseModel):
 
     class Config:
         example = {
-            "order_id": "550e8400-e29b-41d4-a716-446655440010",
+            "order_id": "FOOD-1234",
             "user_id": "550e8400-e29b-41d4-a716-446655440000",
             "ticket_id": "550e8400-e29b-41d4-a716-446655440002",
             "items": [],
@@ -170,9 +170,9 @@ class FoodOrder(BaseModel):
     """
     Internal Food Order model for storage
     """
-    order_id: UUID
+    order_id: str
     user_id: UUID
-    ticket_id: UUID
+    ticket_id: Optional[UUID] = None
     items: List[OrderItem]
     booth_id: str
     delivery_zone: str

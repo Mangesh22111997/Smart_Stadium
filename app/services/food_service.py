@@ -93,12 +93,15 @@ BOOTHS = {
     "B05": BoothStatus(booth_id="B05", current_orders=0, max_capacity=10),
 }
 
+import random
+import string
+
 # ============================================================================
 # ORDER DATABASE
 # ============================================================================
 
-orders_db: Dict[UUID, FoodOrder] = {}
-user_orders: Dict[UUID, List[UUID]] = {}
+orders_db: Dict[str, FoodOrder] = {}
+user_orders: Dict[UUID, List[str]] = {}
 
 
 # ============================================================================
@@ -109,6 +112,15 @@ class FoodService:
     """
     Service class for managing food orders
     """
+
+    @staticmethod
+    def _generate_custom_id() -> str:
+        """
+        Generate ID in format AAAA-1111
+        """
+        prefix = "".join(random.choices(string.ascii_uppercase, k=4))
+        suffix = "".join(random.choices(string.digits, k=4))
+        return f"{prefix}-{suffix}"
 
     @staticmethod
     def get_menu() -> List[MenuItem]:
@@ -234,8 +246,8 @@ class FoodService:
         # Calculate pickup time
         pickup_time = FoodService._calculate_pickup_time(prep_time, queue_delay)
         
-        # Create order
-        order_id = uuid4()
+        # Create order with custom ID
+        order_id = FoodService._generate_custom_id()
         order = FoodOrder(
             order_id=order_id,
             user_id=request.user_id,
@@ -266,7 +278,7 @@ class FoodService:
         return order
 
     @staticmethod
-    def get_order(order_id: UUID) -> Optional[FoodOrder]:
+    def get_order(order_id: str) -> Optional[FoodOrder]:
         """
         Get order by ID
         
@@ -293,7 +305,7 @@ class FoodService:
         return [orders_db[oid] for oid in order_ids if oid in orders_db]
 
     @staticmethod
-    def update_order_status(order_id: UUID, new_status: str) -> Optional[FoodOrder]:
+    def update_order_status(order_id: str, new_status: str) -> Optional[FoodOrder]:
         """
         Update order status
         
@@ -322,7 +334,7 @@ class FoodService:
         return order
 
     @staticmethod
-    def cancel_order(order_id: UUID) -> bool:
+    def cancel_order(order_id: str) -> bool:
         """
         Cancel an order
         

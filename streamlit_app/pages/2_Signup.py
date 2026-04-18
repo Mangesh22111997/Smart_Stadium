@@ -6,14 +6,18 @@ import streamlit as st
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
 from utils.validators import InputValidator
+from utils.ui_helper import add_background_image
 import time
 
 st.set_page_config(page_title="Signup - Smart Stadium", page_icon="📋", layout="centered")
 
+# Apply Background
+add_background_image()
+
 # Check if already logged in
 if SessionManager.is_logged_in():
     st.success("✅ You're already logged in!")
-    st.switch_page("pages/3_Home.py")
+    st.switch_page("pages/01_home.py")
     st.stop()
 
 st.markdown("# 📋 Create Your Account")
@@ -103,15 +107,34 @@ with st.form("signup_form"):
     
     address = st.text_area("Address", placeholder="Enter your full address", key="address")
     
+    # Date of Birth with extended year range
+    from datetime import date
+    dob_val = st.date_input(
+        "Date of Birth",
+        value=date(2000, 1, 1),
+        min_value=date(1947, 1, 1),
+        max_value=date.today(),
+        key="dob_picker"
+    )
+    
+    hobbies_options = ["Sports", "Music", "Movies", "Gaming", "Reading", "Travel", "Art", "Cooking"]
     hobbies = st.multiselect(
-        "Hobbies (Optional)",
-        ["Sports", "Music", "Movies", "Gaming", "Reading", "Travel", "Art", "Cooking"],
+        "Hobbies (Optional - Select up to 3)",
+        hobbies_options,
+        max_selections=3,
         key="hobbies"
     )
     
-    # Terms and conditions
+    # Terms and conditions with link
+    col1, col2 = st.columns([0.7, 0.3])
+    with col1:
+        st.markdown("I agree to the [Terms & Conditions](./0_Terms_and_Conditions) and Privacy Policy")
+    with col2:
+        if st.button("📜 View Terms", key="view_terms"):
+            st.switch_page("pages/0_Terms_and_Conditions.py")
+    
     agree_terms = st.checkbox(
-        "I agree to the Terms & Conditions and Privacy Policy",
+        "I confirm my agreement to the above terms",
         key="agree_terms"
     )
     

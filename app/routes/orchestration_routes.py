@@ -209,7 +209,7 @@ async def get_event_log(
 
 @router.get("/journey-analytics", response_model=JourneyAnalyticsResponse)
 async def get_journey_analytics(
-    time_window: str = Query("24h", regex="^(1h|6h|24h|7d)$")
+    time_window: str = Query("24h", pattern="^(1h|6h|24h|7d)$")
 ):
     """Get analytics on user journeys"""
     try:

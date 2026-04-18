@@ -137,6 +137,21 @@ class APIClient:
         except Exception as e:
             return {"error": str(e)}
     
+    def security_signin(self, username: str, password: str) -> Dict[str, Any]:
+        """Security staff login"""
+        try:
+            response = self.session.post(
+                f"{self.base_url}/auth/security/signin",
+                json={
+                    "username": username,
+                    "password": password
+                },
+                timeout=TIMEOUT
+            )
+            return response.json()
+        except Exception as e:
+            return {"error": str(e)}
+    
     def get_all_users(self, session_token: str) -> Dict[str, Any]:
         """Get all users (admin only)"""
         try:

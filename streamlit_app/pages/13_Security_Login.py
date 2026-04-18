@@ -9,7 +9,7 @@ from utils.api_client import get_api_client
 st.set_page_config(page_title="Security Login - Smart Stadium", page_icon="🔐", layout="centered")
 
 # Redirect if already logged in
-if SessionManager.is_logged_in() and SessionManager.get_user_role() in ["security", "moderator", "superadmin"]:
+if SessionManager.is_logged_in() and SessionManager.is_security():
     st.switch_page("pages/14_Security_Dashboard.py")
 
 st.markdown("# 🔐 Security Staff Login")
@@ -39,30 +39,28 @@ with st.form("security_login_form"):
         else:
             api_client = get_api_client()
             
-            # Attempt security login
-            response = api_client.admin_signin(username, password)
+            # Attempt security login with the new security endpoint
+            response = api_client.security_signin(username, password)
             
             if "error" in response:
                 st.error(f"❌ Login failed: {response.get('error')}")
             elif "session_token" not in response:
                 st.error("❌ Invalid credentials")
             else:
-                # Verify user is security staff
-                admin_type = response.get("admin_type", "").lower()
-                if admin_type not in ["security", "moderator"]:
-                    st.error("❌ Access denied. Only security staff can access this portal.")
-                else:
-                    # Store session
-                    SessionManager.set_session_token(response.get("session_token"))
-                    SessionManager.set_user_id(response.get("user_id"))
-                    SessionManager.set_username(username)
-                    SessionManager.set_user_role(admin_type)
-                    
-                    st.success("✅ Login successful!")
-                    st.info(f"Welcome, {response.get('admin_name', 'Staff')}!")
-                    st.balloons()
-                    
-                    st.switch_page("pages/14_Security_Dashboard.py")
+                # Store session using login_security
+                staff_id = response.get("staff_id")
+                email = response.get("email")
+                role = response.get("role")
+                permissions = response.get("permissions", {})
+                session_token = response.get("session_token")
+                
+                SessionManager.login_security(staff_id, username, email, session_token, role, permissions)
+                
+                st.success("✅ Login successful!")
+                st.info(f"Welcome, {response.get('name', 'Staff')}!")
+                st.balloons()
+                
+                st.switch_page("pages/14_Security_Dashboard.py")
     
     if back_button:
         st.switch_page("pages/1_Login.py")

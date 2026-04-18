@@ -3,17 +3,12 @@ Google Maps Helper - Stadium mapping utilities
 Creates interactive stadium maps with gates, parking, transit
 """
 
-import folium
-from folium import plugins
-import streamlit as st
-from typing import Dict, List, Tuple
-
 class StadiumMapHelper:
-    """Generate stadium maps using Folium"""
+    """Generate stadium maps using Google Maps Embed"""
     
-    # Stadium center coordinates (example)
-    STADIUM_LAT = 28.5244
-    STADIUM_LNG = 77.1855
+    # Stadium center coordinates (Jawaharlal Nehru Stadium, Delhi as example)
+    STADIUM_LAT = 28.5828
+    STADIUM_LNG = 77.2344
     
     # Gate positions (relative to stadium center)
     GATES = {
@@ -45,118 +40,9 @@ class StadiumMapHelper:
     }
     
     @staticmethod
-    def create_stadium_map(highlighted_gate: str = None) -> folium.Map:
-        """Create main stadium map with all features"""
-        
-        # Base map centered on stadium
-        m = folium.Map(
-            location=[StadiumMapHelper.STADIUM_LAT, StadiumMapHelper.STADIUM_LNG],
-            zoom_start=15,
-            tiles="OpenStreetMap"
-        )
-        
-        # Add stadium marker
-        folium.Marker(
-            location=[StadiumMapHelper.STADIUM_LAT, StadiumMapHelper.STADIUM_LNG],
-            popup="<b>Smart Stadium</b><br>Main Event Venue",
-            icon=folium.Icon(color="blue", icon="info-sign")
-        ).add_to(m)
-        
-        # Add gate markers
-        for gate_name, (lat, lng) in StadiumMapHelper.GATES.items():
-            color = "red" if gate_name == highlighted_gate else "green"
-            icon = "exclamation-sign" if gate_name == highlighted_gate else "info-sign"
-            
-            folium.Marker(
-                location=[lat, lng],
-                popup=f"<b>{gate_name}</b><br>Entry/Exit Point",
-                icon=folium.Icon(color=color, icon=icon)
-            ).add_to(m)
-        
-        # Add parking areas
-        for parking_name, (lat, lng) in StadiumMapHelper.PARKING.items():
-            folium.Marker(
-                location=[lat, lng],
-                popup=f"<b>{parking_name}</b>",
-                icon=folium.Icon(color="orange", icon="car")
-            ).add_to(m)
-        
-        # Add metro stations
-        for metro_name, (lat, lng) in StadiumMapHelper.METRO_STATIONS.items():
-            folium.Marker(
-                location=[lat, lng],
-                popup=f"<b>{metro_name}</b>",
-                icon=folium.Icon(color="purple", icon="train")
-            ).add_to(m)
-        
-        # Add bus stops
-        for bus_name, (lat, lng) in StadiumMapHelper.BUS_STOPS.items():
-            folium.Marker(
-                location=[lat, lng],
-                popup=f"<b>{bus_name}</b>",
-                icon=folium.Icon(color="blue", icon="bus")
-            ).add_to(m)
-        
-        # Add legend
-        legend_html = '''
-        <div style="position: fixed; 
-                    bottom: 50px; right: 50px; width: 200px; height: 220px; 
-                    background-color: white; border:2px solid grey; z-index:9999; 
-                    font-size:14px; padding: 10px">
-            <p style="margin: 0;"><b>Stadium Map Legend</b></p>
-            <p style="margin: 5px 0;"><i class="fa fa-map-marker" style="color:blue"></i> Stadium</p>
-            <p style="margin: 5px 0;"><i class="fa fa-map-marker" style="color:green"></i> Gate (Available)</p>
-            <p style="margin: 5px 0;"><i class="fa fa-map-marker" style="color:red"></i> Gate (Highlighted)</p>
-            <p style="margin: 5px 0;"><i class="fa fa-map-marker" style="color:orange"></i> Parking</p>
-            <p style="margin: 5px 0;"><i class="fa fa-map-marker" style="color:purple"></i> Metro</p>
-            <p style="margin: 5px 0;"><i class="fa fa-map-marker" style="color:blue"></i> Bus Stop</p>
-        </div>
-        '''
-        m.get_root().html.add_child(folium.Element(legend_html))
-        
-        return m
-    
-    @staticmethod
-    def create_gate_detail_map(gate_name: str, gate_lat: float, gate_lng: float) -> folium.Map:
-        """Create detailed map for specific gate"""
-        
-        m = folium.Map(
-            location=[gate_lat, gate_lng],
-            zoom_start=16,
-            tiles="OpenStreetMap"
-        )
-        
-        # Gate location
-        folium.Marker(
-            location=[gate_lat, gate_lng],
-            popup=f"<b>{gate_name}</b><br>Entry Point",
-            icon=folium.Icon(color="red", icon="exclamation-sign"),
-            prefix="fa"
-        ).add_to(m)
-        
-        # Nearby parking
-        folium.Circle(
-            location=[gate_lat, gate_lng],
-            radius=200,
-            color="orange",
-            fill=True,
-            fillColor="orange",
-            fillOpacity=0.2,
-            popup="Nearby Parking"
-        ).add_to(m)
-        
-        # Accessible routes
-        folium.Circle(
-            location=[gate_lat, gate_lng],
-            radius=100,
-            color="green",
-            fill=True,
-            fillColor="green",
-            fillOpacity=0.1,
-            popup="Accessible Area"
-        ).add_to(m)
-        
-        return m
+    def get_embed_url(lat: float, lng: float, zoom: int = 15) -> str:
+        """Generate Google Maps Embed URL (Free version)"""
+        return f"https://maps.google.com/maps?q={lat},{lng}&z={zoom}&output=embed"
     
     @staticmethod
     def get_directions_text(from_location: str, to_location: str = "Stadium") -> str:
@@ -197,7 +83,7 @@ class StadiumMapHelper:
         return directions_map.get(key, f"Navigate from {from_location} to {to_location}")
     
     @staticmethod
-    def get_commute_estimates(from_location: str) -> Dict[str, str]:
+    def get_commute_estimates(from_location: str) -> dict:
         """Get travel time estimates"""
         
         estimates = {
@@ -218,39 +104,3 @@ class StadiumMapHelper:
             "distance": "~1.2 km",
             "crowding": "Moderate"
         }
-    
-    @staticmethod
-    def create_parking_utilization_map(utilization: Dict[str, float]) -> folium.Map:
-        """Create map showing parking availability"""
-        
-        m = folium.Map(
-            location=[StadiumMapHelper.STADIUM_LAT, StadiumMapHelper.STADIUM_LNG],
-            zoom_start=14,
-            tiles="OpenStreetMap"
-        )
-        
-        # Add parking with color based on occupancy
-        for parking_name, (lat, lng) in StadiumMapHelper.PARKING.items():
-            occupancy = utilization.get(parking_name, 0)
-            
-            if occupancy > 80:
-                color = "red"
-                popup_text = "Almost Full"
-            elif occupancy > 50:
-                color = "orange"
-                popup_text = "Moderately Full"
-            else:
-                color = "green"
-                popup_text = "Many Spaces Available"
-            
-            folium.CircleMarker(
-                location=[lat, lng],
-                radius=15,
-                popup=f"<b>{parking_name}</b><br>{popup_text}<br>Occupancy: {occupancy}%",
-                color=color,
-                fill=True,
-                fillColor=color,
-                fillOpacity=0.7
-            ).add_to(m)
-        
-        return m

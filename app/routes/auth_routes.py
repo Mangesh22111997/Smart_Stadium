@@ -5,7 +5,7 @@ Integrates with Firebase Realtime Database
 
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, EmailStr
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from app.services.firebase_auth_service import FirebaseAuthService
 import logging
 
@@ -98,7 +98,7 @@ class AdminSignInResponse(BaseModel):
     admin_type: str
     session_token: str
     login_time: str
-    permissions: list
+    permissions: Optional[Dict[str, Any]] = {}
     message: str = "Admin login successful"
 
 
@@ -384,6 +384,47 @@ async def admin_sign_in(request: SignInRequest) -> Dict[str, Any]:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Admin login failed"
+        )
+
+
+@router.post("/security/signin", response_model=Dict[str, Any], status_code=status.HTTP_200_OK, tags=["Security Auth"])
+async def security_sign_in(request: SignInRequest) -> Dict[str, Any]:
+    """
+    Security staff login
+    
+    - **username**: Security staff username
+    - **password**: Security staff password
+    
+    Returns: Security staff data with session token and permissions
+    """
+    try:
+        result = FirebaseAuthService.security_login(
+            username=request.username,
+            password=request.password
+        )
+        
+        return {
+            "staff_id": result["staff_id"],
+            "username": result["username"],
+            "email": result["email"],
+            "name": result["name"],
+            "role": result["role"],
+            "session_token": result["session_token"],
+            "login_time": result["login_time"],
+            "permissions": result["permissions"],
+            "message": "Security staff login successful"
+        }
+        
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e)
+        )
+    except Exception as e:
+        logger.error(f"Security staff sign in error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Security staff login failed"
         )
 
 

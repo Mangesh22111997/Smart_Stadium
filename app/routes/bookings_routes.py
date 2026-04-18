@@ -16,6 +16,7 @@ class BookingCreate(BaseModel):
     commute_mode: str
     parking_required: bool
     departure_preference: str
+    food_order_id: Optional[str] = None
 
 @router.post("/create", status_code=201)
 async def create_booking(
@@ -51,6 +52,7 @@ async def create_booking(
             "commute_mode": booking.commute_mode,
             "parking_required": booking.parking_required,
             "departure_preference": booking.departure_preference,
+            "food_order_id": booking.food_order_id,
             "booking_date": datetime.now().isoformat(),
             "status": "confirmed"
         }
@@ -91,8 +93,10 @@ async def get_user_bookings(user_id: str, session_token: str = Query(...)):
         user_bookings = []
         for ticket_id, booking_data in bookings_ref.val().items():
             if booking_data and booking_data.get("user_id") == user_id:
+                # Ensure all fields are present for consistency
                 user_bookings.append({
                     "ticket_id": ticket_id,
+                    "food_order_id": booking_data.get("food_order_id"),
                     **booking_data
                 })
         

@@ -60,6 +60,19 @@ class SessionManager:
         st.session_state[SessionManager.PERMISSIONS] = permissions
     
     @staticmethod
+    def login_security(staff_id: str, username: str, email: str, 
+                      session_token: str, role: str, permissions: Dict[str, Any]) -> None:
+        """Set security staff as logged in"""
+        st.session_state[SessionManager.IS_LOGGED_IN] = True
+        st.session_state[SessionManager.USER_ID] = staff_id
+        st.session_state[SessionManager.USERNAME] = username
+        st.session_state[SessionManager.EMAIL] = email
+        st.session_state[SessionManager.SESSION_TOKEN] = session_token
+        st.session_state[SessionManager.USER_TYPE] = "security"
+        st.session_state[SessionManager.ADMIN_TYPE] = role  # Store role in admin_type field
+        st.session_state[SessionManager.PERMISSIONS] = permissions
+    
+    @staticmethod
     def logout() -> None:
         """Clear user session"""
         st.session_state[SessionManager.IS_LOGGED_IN] = False
@@ -116,3 +129,33 @@ class SessionManager:
         """Check if user has specific permission"""
         permissions = st.session_state.get(SessionManager.PERMISSIONS, {})
         return permissions.get(permission, False)
+    
+    @staticmethod
+    def get_user_role() -> Optional[str]:
+        """Get user type/role"""
+        return st.session_state.get(SessionManager.USER_TYPE)
+    
+    @staticmethod
+    def is_security() -> bool:
+        """Check if user is security staff"""
+        return st.session_state.get(SessionManager.USER_TYPE) == "security"
+    
+    @staticmethod
+    def set_session_token(token: str) -> None:
+        """Set session token"""
+        st.session_state[SessionManager.SESSION_TOKEN] = token
+    
+    @staticmethod
+    def set_user_id(user_id: str) -> None:
+        """Set user ID"""
+        st.session_state[SessionManager.USER_ID] = user_id
+    
+    @staticmethod
+    def set_username(username: str) -> None:
+        """Set username"""
+        st.session_state[SessionManager.USERNAME] = username
+    
+    @staticmethod
+    def set_user_role(user_type: str) -> None:
+        """Set user type/role"""
+        st.session_state[SessionManager.USER_TYPE] = user_type

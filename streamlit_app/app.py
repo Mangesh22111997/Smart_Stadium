@@ -7,6 +7,9 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
+from utils.ui_helper import add_background_image
+import base64
+import os
 
 # Page configuration
 st.set_page_config(
@@ -46,26 +49,8 @@ else:
         "📋 Signup": "signup",
     }
 
-# Custom CSS
-st.markdown("""
-<style>
-    [data-testid="stAppViewContainer"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-    }
-    .main {
-        background: transparent;
-    }
-    .stContainer {
-        background: white;
-        border-radius: 15px;
-        padding: 30px;
-        margin: 20px auto;
-        max-width: 1200px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-</style>
-""", unsafe_allow_html=True)
+# Apply Background Image
+add_background_image()
 
 # Header
 col1, col2 = st.columns([0.8, 0.2])
@@ -95,24 +80,37 @@ if pages:
     
     # Route to appropriate page
     page_map = {
-        "🔐 Login": "pages/1_Login",
-        "📋 Signup": "pages/2_Signup",
-        "🏠 Home": "pages/3_Home",
-        "🎉 Events": "pages/4_Events",
-        "🎟️ Bookings": "pages/5_Bookings",
-        "🗺️ Maps": "pages/6_Maps",
-        "🍔 Food": "pages/7_Food",
-        "🔔 Notifications": "pages/8_Notifications",
-        "📊 Dashboard": "pages/9_Admin_Dashboard",
-        "👥 Users": "pages/10_Users",
-        "🚪 Gates": "pages/11_Gates",
-        "⚙️ Settings": "pages/12_Settings",
+        "🔐 Login": "1_Login",
+        "📋 Signup": "2_Signup",
+        "🏠 Home": "3_Home",
+        "🎉 Events": "4_Events",
+        "🎟️ Bookings": "5_Bookings",
+        "🗺️ Maps": "6_Maps",
+        "🍔 Food": "7_Food",
+        "🔔 Notifications": "8_Notifications",
+        "📊 Dashboard": "9_Admin_Dashboard",
+        "👥 Users": "10_Users",
+        "🚪 Gates": "11_Gates",
+        "⚙️ Settings": "12_Settings",
+        "🔒 Security Login": "13_Security_Login",
+        "🚨 Security Dashboard": "14_Security_Dashboard",
+        "🚀 Emergency Response": "15_Emergency_Response",
     }
     
     if selected in page_map:
-        # Import the selected page
-        selected_page = __import__(page_map[selected].replace("/", ".").replace("pages.", ""), fromlist=[""])
-        # This will be handled by Streamlit's built-in multipage routing
+        # Import the selected page dynamically using importlib
+        import importlib.util
+        import sys
+        import os
+        
+        page_name = page_map[selected]
+        page_path = os.path.join(os.path.dirname(__file__), "pages", f"{page_name}.py")
+        
+        if os.path.exists(page_path):
+            spec = importlib.util.spec_from_file_location(page_name, page_path)
+            module = importlib.util.module_from_spec(spec)
+            sys.modules[page_name] = module
+            spec.loader.exec_module(module)
 
 st.divider()
 

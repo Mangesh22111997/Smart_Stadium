@@ -26,6 +26,12 @@ if user_role not in ["security", "moderator", "superadmin"]:
 st.markdown("# 📊 Security Monitoring Dashboard")
 st.markdown(f"Logged in as: **{SessionManager.get_username()}** ({user_role.title()})")
 
+# Initialize session state
+if "view_mode" not in st.session_state:
+    st.session_state.view_mode = None
+if "editing_gate" not in st.session_state:
+    st.session_state.editing_gate = None
+
 col1, col2, col3 = st.columns(3)
 with col1:
     if st.button("🎬 View Alerts", use_container_width=True):

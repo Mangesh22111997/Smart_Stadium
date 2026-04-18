@@ -31,10 +31,20 @@ with col1:
         st.switch_page("pages/14_Security_Dashboard.py")
 with col2:
     if st.button("📞 Emergency Contacts"):
-        st.session_state.show_contacts = True
+        st.session_state.show_contacts = st.session_state.get("show_contacts", False)
+        if not st.session_state.show_contacts:
+            st.session_state.show_contacts = True
+        else:
+            st.session_state.show_contacts = False
+        st.rerun()
 with col3:
     if st.button("📢 Public Announcements"):
-        st.session_state.show_announcements = True
+        st.session_state.show_announcements = st.session_state.get("show_announcements", False)
+        if not st.session_state.show_announcements:
+            st.session_state.show_announcements = True
+        else:
+            st.session_state.show_announcements = False
+        st.rerun()
 with col4:
     if st.button("🚪 Logout"):
         SessionManager.logout()

@@ -19,7 +19,7 @@ if not SessionManager.is_logged_in():
 
 if not SessionManager.is_admin():
     st.error("❌ Admin access required")
-    st.switch_page("pages/3_Home.py")
+    st.switch_page("pages/01_home.py")
     st.stop()
 
 api_client = get_api_client()

@@ -1,4 +1,4 @@
-  """
+"""
 Food Routes - API endpoints for food ordering
 """
 from fastapi import APIRouter, HTTPException, status
@@ -39,7 +39,7 @@ async def place_food_order(request: FoodOrderRequest) -> FoodOrderResponse:
 
 
 @router.get("/orders/{order_id}", response_model=FoodOrderResponse)
-async def get_food_order(order_id: UUID) -> FoodOrderResponse:
+async def get_food_order(order_id: str) -> FoodOrderResponse:
     """
     Get food order details
     
@@ -83,7 +83,7 @@ async def get_menu() -> MenuResponse:
 
 @router.put("/orders/{order_id}/status", response_model=FoodOrderResponse)
 async def update_order_status(
-    order_id: UUID,
+    order_id: str,
     request: OrderStatusUpdateRequest
 ) -> FoodOrderResponse:
     """
@@ -105,7 +105,7 @@ async def update_order_status(
 
 
 @router.delete("/orders/{order_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def cancel_food_order(order_id: UUID):
+async def cancel_food_order(order_id: str):
     """
     Cancel a food order
     

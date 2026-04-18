@@ -13,15 +13,47 @@ from app.routes import (
 from app.config.firebase_config import initialize_firebase, get_db_connection
 import logging
 
+from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Initialize Limiter
+limiter = Limiter(key_func=get_remote_address)
 
 # Initialize FastAPI app
 app = FastAPI(
     title="Smart Stadium System",
     description="Backend for managing stadium crowd, gates, food, and emergencies with Firebase Realtime Database",
     version="0.2.0"
+)
+
+# Add Limiter to state
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# ============================================================================
+# MIDDLEWARE
+# ============================================================================
+
+ALLOWED_ORIGINS = [
+    "http://localhost:8501",   # Streamlit default
+    "http://localhost:8502",
+    "http://localhost:8503",
+    "http://localhost:8504",
+    "http://localhost:8505",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # ============================================================================
