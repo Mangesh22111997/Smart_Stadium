@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException, Query
-from typing import List, Optional
+
+from fastapi import APIRouter, HTTPException, Query, Depends, status
+from typing import List, Optional, Dict, Any
 from datetime import datetime
 from uuid import UUID
 from app.models.integration import (
@@ -9,6 +10,7 @@ from app.models.integration import (
     SyncAllSystemsResponse, SystemHealthResponse, JourneyAnalyticsResponse
 )
 from app.services import orchestration_service
+from app.utils.auth_middleware import verify_token, admin_only
 
 
 # Create router
@@ -21,13 +23,8 @@ router = APIRouter(
 @router.post("/user-journey/register-and-book", response_model=dict)
 async def register_and_book_ticket(request: RegisterAndBookRequest):
     """
-    Complete user registration and ticket booking workflow
-    
-    Orchestrates:
-    - User registration
-    - Ticket booking
-    - Gate assignment
-    - Notification sending
+    Complete user registration and ticket booking workflow.
+    (This is an initial registration flow, so it might be public if creating a new user)
     """
     try:
         result = orchestration_service.OrchestrationService.register_and_book_ticket(
@@ -50,8 +47,14 @@ async def register_and_book_ticket(request: RegisterAndBookRequest):
 
 
 @router.get("/user-journey/{user_id}", response_model=dict)
-async def get_user_journey(user_id: UUID):
-    """Get complete user journey status and history"""
+async def get_user_journey(
+    user_id: str,
+    current_user: dict = Depends(verify_token)
+):
+    """Get complete user journey status and history. Protected."""
+    if user_id != current_user.get("uid") and not current_user.get("is_admin"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized")
+        
     try:
         result = orchestration_service.OrchestrationService.get_user_journey(user_id)
         return result
@@ -61,15 +64,12 @@ async def get_user_journey(user_id: UUID):
 
 @router.post("/redistribute-users", response_model=dict)
 async def redistribute_users(
-    request: ReassignmentRequest
+    request: ReassignmentRequest,
+    current_user: dict = Depends(admin_only)
 ):
     """
-    Check gates and redistribute users from overcrowded gates
-    
-    Triggers:
-    - Utilization check
-    - User reassignment
-    - Notifications to affected users
+    Check gates and redistribute users from overcrowded gates.
+    ADMIN ONLY.
     """
     try:
         result = orchestration_service.OrchestrationService.check_and_redistribute_users(
@@ -84,16 +84,13 @@ async def redistribute_users(
 
 
 @router.post("/evacuation", response_model=EvacuationResponse)
-async def orchestrate_evacuation(request: EvacuationRequest):
+async def orchestrate_evacuation(
+    request: EvacuationRequest,
+    current_user: dict = Depends(admin_only)
+):
     """
-    Orchestrate comprehensive emergency evacuation
-    
-    Orchestrates:
-    - User reassignment from evacuation location
-    - Emergency creation
-    - Staff assignment
-    - Multi-channel notifications
-    - Evacuation plan generation
+    Orchestrate comprehensive emergency evacuation.
+    ADMIN ONLY.
     """
     try:
         result = orchestration_service.OrchestrationService.orchestrate_evacuation(
@@ -112,18 +109,16 @@ async def orchestrate_evacuation(request: EvacuationRequest):
 
 @router.post("/food-ordering/{user_id}", response_model=FoodOrderingWorkflowResponse)
 async def orchestrate_food_ordering(
-    user_id: UUID,
-    request: FoodOrderingWorkflowRequest
+    user_id: str,
+    request: FoodOrderingWorkflowRequest,
+    current_user: dict = Depends(verify_token)
 ):
     """
-    Orchestrate complete food ordering workflow
-    
-    Orchestrates:
-    - Order placement
-    - Booth allocation
-    - Crowd level assessment
-    - Notifications
+    Orchestrate complete food ordering workflow. Protected.
     """
+    if user_id != current_user.get("uid") and not current_user.get("is_admin"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized")
+        
     try:
         result = orchestration_service.OrchestrationService.orchestrate_food_ordering(
             user_id=user_id,
@@ -140,19 +135,16 @@ async def orchestrate_food_ordering(
 
 @router.post("/emergency-sos/{user_id}", response_model=EmergencySOSWorkflowResponse)
 async def orchestrate_emergency_sos(
-    user_id: UUID,
-    request: EmergencySOSWorkflowRequest
+    user_id: str,
+    request: EmergencySOSWorkflowRequest,
+    current_user: dict = Depends(verify_token)
 ):
     """
-    Orchestrate comprehensive emergency SOS response
-    
-    Orchestrates:
-    - Emergency creation
-    - Exit route computation
-    - Staff assignment
-    - Multi-channel alert notifications
-    - Evacuation plan generation
+    Orchestrate comprehensive emergency SOS response. Protected.
     """
+    if user_id != current_user.get("uid") and not current_user.get("is_admin"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized")
+        
     try:
         result = orchestration_service.OrchestrationService.orchestrate_emergency_sos(
             user_id=user_id,
@@ -170,8 +162,8 @@ async def orchestrate_emergency_sos(
 
 
 @router.post("/sync-all-systems", response_model=SyncAllSystemsResponse)
-async def sync_all_systems():
-    """Force synchronization of all modules"""
+async def sync_all_systems(current_user: dict = Depends(admin_only)):
+    """Force synchronization of all modules. ADMIN ONLY."""
     try:
         result = orchestration_service.OrchestrationService.sync_all_systems()
         return result
@@ -180,8 +172,8 @@ async def sync_all_systems():
 
 
 @router.get("/system-health", response_model=SystemHealthResponse)
-async def get_system_health():
-    """Get health status of all integrated modules"""
+async def get_system_health(current_user: dict = Depends(admin_only)):
+    """Get health status of all integrated modules. ADMIN ONLY."""
     try:
         result = orchestration_service.OrchestrationService.get_system_health()
         return result
@@ -193,9 +185,10 @@ async def get_system_health():
 async def get_event_log(
     event_type: Optional[str] = Query(None),
     limit: int = Query(500, ge=1, le=1000),
-    skip: int = Query(0, ge=0)
+    skip: int = Query(0, ge=0),
+    current_user: dict = Depends(admin_only)
 ):
-    """Get workflow event log with filtering and pagination"""
+    """Get workflow event log. ADMIN ONLY."""
     try:
         result = orchestration_service.OrchestrationService.get_event_log(
             event_type=event_type,
@@ -209,9 +202,10 @@ async def get_event_log(
 
 @router.get("/journey-analytics", response_model=JourneyAnalyticsResponse)
 async def get_journey_analytics(
-    time_window: str = Query("24h", pattern="^(1h|6h|24h|7d)$")
+    time_window: str = Query("24h", pattern="^(1h|6h|24h|7d)$"),
+    current_user: dict = Depends(admin_only)
 ):
-    """Get analytics on user journeys"""
+    """Get analytics on user journeys. ADMIN ONLY."""
     try:
         result = orchestration_service.OrchestrationService.get_journey_analytics(
             time_window=time_window

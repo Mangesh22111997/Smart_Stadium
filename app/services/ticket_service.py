@@ -1,200 +1,118 @@
 """
-Ticket Service - Business logic for ticket booking
+Ticket Service - Business logic for ticket booking with Firebase RTDB integration
 """
-from uuid import UUID, uuid4
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Any
+import logging
+
 from app.models.ticket import Ticket, TicketBookingRequest, TicketUpdateRequest
+from app.config.firebase_config import get_db_connection, Collections
 
-# ============================================================================
-# IN-MEMORY TICKET DATABASE
-# ============================================================================
-
-tickets_db: Dict[UUID, Ticket] = {}
-
-
-# ============================================================================
-# TICKET SERVICE CLASS
-# ============================================================================
+logger = logging.getLogger(__name__)
+executor = ThreadPoolExecutor(max_workers=10)
 
 class TicketService:
     """
-    Service class for managing ticket bookings
+    Service class for managing ticket bookings in Firebase Realtime Database.
+    All operations are non-blocking for the FastAPI event loop.
     """
 
     @staticmethod
-    def book_ticket(request: TicketBookingRequest) -> Ticket:
+    async def book_ticket(request: TicketBookingRequest) -> Dict[str, Any]:
         """
-        Book a new ticket
+        Book a new ticket in Firebase RTDB
         
         Args:
             request: TicketBookingRequest with booking details
             
         Returns:
-            Created Ticket object
+            Dictionary with ticket_id and confirmation data
         """
-        ticket_id = uuid4()
-        ticket = Ticket(
-            ticket_id=ticket_id,
-            user_id=request.user_id,
-            event_id=request.event_id,
-            commute_mode=request.commute_mode,
-            parking_required=request.parking_required,
-            departure_preference=request.departure_preference,
-            booking_date=datetime.now(),
-            status="confirmed"
-        )
-        tickets_db[ticket_id] = ticket
+        loop = asyncio.get_event_loop()
+        db = get_db_connection()
         
-        print(f"✅ Ticket booked: {ticket_id} for user {request.user_id}")
-        return ticket
-
-    @staticmethod
-    def get_ticket(ticket_id: UUID) -> Optional[Ticket]:
-        """
-        Get ticket by ID
+        # Prepare booking data
+        booking_data = {
+            "user_id": request.user_id,
+            "event_id": request.event_id,
+            "commute_mode": request.commute_mode,
+            "parking_required": request.parking_required,
+            "departure_preference": request.departure_preference,
+            "booking_date": datetime.now().isoformat(),
+            "status": "confirmed"
+        }
         
-        Args:
-            ticket_id: UUID of the ticket
+        def _perform_write():
+            # Push to Firebase
+            result = db.child(Collections.TICKETS).push(booking_data)
+            ticket_id = result["name"]
             
-        Returns:
-            Ticket object or None if not found
-        """
-        return tickets_db.get(ticket_id)
-
-    @staticmethod
-    def list_all_tickets() -> List[Ticket]:
-        """
-        Get all tickets
-        
-        Returns:
-            List of Ticket objects
-        """
-        return list(tickets_db.values())
-
-    @staticmethod
-    def get_user_tickets(user_id: UUID) -> List[Ticket]:
-        """
-        Get all tickets for a specific user
-        
-        Args:
-            user_id: UUID of the user
+            # Logic for gate assignment (simplified)
+            assigned_gate = f"Gate {chr(65 + (hash(ticket_id) % 5))}"
+            db.child(Collections.TICKETS).child(ticket_id).update({"assigned_gate": assigned_gate})
             
-        Returns:
-            List of Ticket objects for that user
-        """
-        return [
-            ticket for ticket in tickets_db.values()
-            if ticket.user_id == user_id
-        ]
-
-    @staticmethod
-    def update_ticket(ticket_id: UUID, request: TicketUpdateRequest) -> Optional[Ticket]:
-        """
-        Update ticket details
-        
-        Args:
-            ticket_id: UUID of the ticket
-            request: TicketUpdateRequest with updated fields
+            return {
+                "ticket_id": ticket_id,
+                "assigned_gate": assigned_gate,
+                **booking_data
+            }
             
-        Returns:
-            Updated Ticket object or None if not found
-        """
-        if ticket_id not in tickets_db:
-            return None
-        
-        ticket = tickets_db[ticket_id]
-        
-        # Update only provided fields
-        if request.commute_mode is not None:
-            ticket.commute_mode = request.commute_mode
-        if request.parking_required is not None:
-            ticket.parking_required = request.parking_required
-        if request.departure_preference is not None:
-            ticket.departure_preference = request.departure_preference
-        
-        print(f"✅ Ticket updated: {ticket_id}")
-        return ticket
+        return await loop.run_in_executor(executor, _perform_write)
 
     @staticmethod
-    def cancel_ticket(ticket_id: UUID) -> bool:
+    async def get_ticket(ticket_id: str) -> Optional[Dict[str, Any]]:
         """
-        Cancel a ticket
+        Get ticket by ID from Firebase RTDB
+        """
+        loop = asyncio.get_event_loop()
+        db = get_db_connection()
         
-        Args:
-            ticket_id: UUID of the ticket
+        def _perform_read():
+            ticket = db.child(Collections.TICKETS).child(ticket_id).get().val()
+            if ticket:
+                ticket["ticket_id"] = ticket_id
+            return ticket
             
-        Returns:
-            True if cancelled, False if not found
-        """
-        if ticket_id not in tickets_db:
-            return False
-        
-        ticket = tickets_db[ticket_id]
-        ticket.status = "cancelled"
-        
-        print(f"✅ Ticket cancelled: {ticket_id}")
-        return True
+        return await loop.run_in_executor(executor, _perform_read)
 
     @staticmethod
-    def get_tickets_by_commute_mode(commute_mode: str) -> List[Ticket]:
+    async def get_user_tickets(user_id: str) -> List[Dict[str, Any]]:
         """
-        Get all tickets with a specific commute mode
+        Get all tickets for a specific user from Firebase RTDB
+        """
+        loop = asyncio.get_event_loop()
+        db = get_db_connection()
         
-        Args:
-            commute_mode: Commute mode (metro, bus, private, cab)
+        def _perform_read():
+            tickets_ref = db.child(Collections.TICKETS).get()
+            if not tickets_ref.val():
+                return []
+                
+            user_tickets = []
+            for tid, data in tickets_ref.val().items():
+                if data.get("user_id") == user_id:
+                    data["ticket_id"] = tid
+                    user_tickets.append(data)
+            return user_tickets
             
-        Returns:
-            List of matching Ticket objects
-        """
-        return [
-            ticket for ticket in tickets_db.values()
-            if ticket.commute_mode == commute_mode and ticket.status != "cancelled"
-        ]
+        return await loop.run_in_executor(executor, _perform_read)
 
     @staticmethod
-    def get_tickets_by_departure_preference(preference: str) -> List[Ticket]:
+    async def cancel_ticket(ticket_id: str) -> bool:
         """
-        Get all tickets with a specific departure preference
+        Cancel a ticket in Firebase RTDB
+        """
+        loop = asyncio.get_event_loop()
+        db = get_db_connection()
         
-        Args:
-            preference: Departure preference (early, immediate, delayed)
+        def _perform_update():
+            ticket = db.child(Collections.TICKETS).child(ticket_id).get().val()
+            if not ticket:
+                return False
             
-        Returns:
-            List of matching Ticket objects
-        """
-        return [
-            ticket for ticket in tickets_db.values()
-            if ticket.departure_preference == preference and ticket.status != "cancelled"
-        ]
-
-    @staticmethod
-    def get_parking_required_tickets() -> List[Ticket]:
-        """
-        Get all tickets that require parking
-        
-        Returns:
-            List of Ticket objects requiring parking
-        """
-        return [
-            ticket for ticket in tickets_db.values()
-            if ticket.parking_required and ticket.status != "cancelled"
-        ]
-
-    @staticmethod
-    def get_ticket_count() -> int:
-        """
-        Get total number of active tickets
-        
-        Returns:
-            Count of tickets
-        """
-        return len([t for t in tickets_db.values() if t.status != "cancelled"])
-
-    @staticmethod
-    def clear_all():
-        """
-        Clear all tickets (for testing)
-        """
-        tickets_db.clear()
-        print("✅ All tickets cleared from database")
+            db.child(Collections.TICKETS).child(ticket_id).update({"status": "cancelled"})
+            return True
+            
+        return await loop.run_in_executor(executor, _perform_update)

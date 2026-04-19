@@ -41,7 +41,18 @@ class StadiumMapHelper:
     
     @staticmethod
     def get_embed_url(lat: float, lng: float, zoom: int = 15) -> str:
-        """Generate Google Maps Embed URL (Free version)"""
+        """
+        Generate Google Maps Embed URL.
+        Uses API Key from settings if available, otherwise falls back to free version.
+        """
+        try:
+            from app.config.settings import GOOGLE_MAPS_API_KEY
+            if GOOGLE_MAPS_API_KEY:
+                return f"https://www.google.com/maps/embed/v1/view?key={GOOGLE_MAPS_API_KEY}&center={lat},{lng}&zoom={zoom}"
+        except Exception:
+            pass
+            
+        # Fallback to free version if key is missing
         return f"https://maps.google.com/maps?q={lat},{lng}&z={zoom}&output=embed"
     
     @staticmethod

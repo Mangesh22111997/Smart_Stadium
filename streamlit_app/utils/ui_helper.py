@@ -1,12 +1,12 @@
 import streamlit as st
-from utils.asset_loader import get_asset_from_db
+from utils.asset_loader import get_background_base64
 
 def add_background_image():
     """
     Apply a premium semi-transparent background image to the Streamlit app.
     Fetches the image from Firebase via asset_loader.
     """
-    img_base64 = get_asset_from_db("background_base64")
+    img_base64 = get_background_base64()
     
     if img_base64:
         bg_style = f"""

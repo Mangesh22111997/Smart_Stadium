@@ -1,10 +1,10 @@
 """
 Ticket models using Pydantic for validation
 """
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from uuid import UUID
 from datetime import datetime
-from typing import Literal
+from typing import Literal, Optional, Dict, Any, List
 
 # ============================================================================
 # REQUEST MODELS (for API input)
@@ -12,27 +12,34 @@ from typing import Literal
 
 class TicketBookingRequest(BaseModel):
     """
-    Model for ticket booking request
+    Model for ticket booking request with strict validation
     """
-    user_id: UUID
-    event_id: UUID
-    commute_mode: Literal["metro", "bus", "private", "cab"] = Field(
-        ...,
-        description="Mode of commute"
-    )
-    parking_required: bool = Field(
-        default=False,
-        description="Is parking needed?"
-    )
-    departure_preference: Literal["early", "immediate", "delayed"] = Field(
-        default="immediate",
-        description="When to depart"
-    )
+    user_id: str
+    event_id: str
+    commute_mode: str = Field(..., description="Mode of commute (metro, bus, private, cab, walk)")
+    parking_required: bool = Field(default=False, description="Is parking needed?")
+    departure_preference: str = Field(default="immediate", description="When to depart (early, immediate, delayed)")
+
+    @field_validator("commute_mode")
+    @classmethod
+    def validate_commute_mode(cls, v: str) -> str:
+        allowed = {"metro", "bus", "private", "cab", "walk"}
+        if v.lower() not in allowed:
+            raise ValueError(f"commute_mode must be one of {allowed}")
+        return v.lower()
+
+    @field_validator("departure_preference")
+    @classmethod
+    def validate_departure_preference(cls, v: str) -> str:
+        allowed = {"early", "immediate", "delayed"}
+        if v.lower() not in allowed:
+            raise ValueError(f"departure_preference must be one of {allowed}")
+        return v.lower()
 
     class Config:
         example = {
-            "user_id": "550e8400-e29b-41d4-a716-446655440000",
-            "event_id": "550e8400-e29b-41d4-a716-446655440001",
+            "user_id": "user_123",
+            "event_id": "event_456",
             "commute_mode": "metro",
             "parking_required": False,
             "departure_preference": "immediate"
@@ -43,18 +50,18 @@ class TicketUpdateRequest(BaseModel):
     """
     Model for ticket update request
     """
-    commute_mode: Literal["metro", "bus", "private", "cab"] = Field(
-        default=None,
-        description="Mode of commute"
-    )
-    parking_required: bool = Field(
-        default=None,
-        description="Is parking needed?"
-    )
-    departure_preference: Literal["early", "immediate", "delayed"] = Field(
-        default=None,
-        description="When to depart"
-    )
+    commute_mode: Optional[str] = Field(default=None, description="Updated mode of commute")
+    parking_required: Optional[bool] = Field(default=None, description="Is parking needed?")
+    departure_preference: Optional[str] = Field(default=None, description="Updated departure preference")
+
+    @field_validator("commute_mode")
+    @classmethod
+    def validate_commute_mode(cls, v: Optional[str]) -> Optional[str]:
+        if v is None: return None
+        allowed = {"metro", "bus", "private", "cab", "walk"}
+        if v.lower() not in allowed:
+            raise ValueError(f"commute_mode must be one of {allowed}")
+        return v.lower()
 
     class Config:
         example = {
@@ -71,21 +78,21 @@ class TicketResponse(BaseModel):
     """
     Model for ticket response
     """
-    ticket_id: UUID
-    user_id: UUID
-    event_id: UUID
+    ticket_id: str
+    user_id: str
+    event_id: str
     commute_mode: str
     parking_required: bool
     departure_preference: str
-    booking_date: datetime
+    booking_date: str
     status: str
 
     class Config:
         from_attributes = True
         example = {
-            "ticket_id": "550e8400-e29b-41d4-a716-446655440002",
-            "user_id": "550e8400-e29b-41d4-a716-446655440000",
-            "event_id": "550e8400-e29b-41d4-a716-446655440001",
+            "ticket_id": "TICKET-1234",
+            "user_id": "user_123",
+            "event_id": "event_456",
             "commute_mode": "metro",
             "parking_required": False,
             "departure_preference": "immediate",
@@ -99,13 +106,7 @@ class TicketListResponse(BaseModel):
     Model for ticket list response
     """
     total: int
-    tickets: list[TicketResponse]
-
-    class Config:
-        example = {
-            "total": 5,
-            "tickets": []
-        }
+    tickets: List[TicketResponse]
 
 
 # ============================================================================
@@ -116,9 +117,9 @@ class Ticket(BaseModel):
     """
     Internal Ticket model for storage
     """
-    ticket_id: UUID
-    user_id: UUID
-    event_id: UUID
+    ticket_id: str
+    user_id: str
+    event_id: str
     commute_mode: str
     parking_required: bool
     departure_preference: str

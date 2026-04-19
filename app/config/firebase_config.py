@@ -5,8 +5,11 @@ Handles Firebase Realtime Database initialization and configuration
 """
 
 import pyrebase
+import firebase_admin
+from firebase_admin import credentials, auth
 from typing import Optional, Any
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -37,14 +40,32 @@ firebaseConfig = {
 
 def initialize_firebase() -> Any:
     """
-    Initialize Firebase with Realtime Database
+    Initialize Firebase with Realtime Database and Admin SDK
     
     Returns:
         Firebase app instance
     """
     try:
         logger.info("🔑 Initializing Firebase...")
+        
+        # Initialize Pyrebase (for RTDB REST)
         firebase = pyrebase.initialize_app(firebaseConfig)
+        
+        # Initialize Firebase Admin SDK (for token verification)
+        if not firebase_admin._apps:
+            # Check for service account path in env, fallback to default credentials
+            service_account_path = os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH")
+            if service_account_path and os.path.exists(service_account_path):
+                cred = credentials.Certificate(service_account_path)
+                firebase_admin.initialize_app(cred, {
+                    'databaseURL': FIREBASE_DATABASE_URL
+                })
+            else:
+                # Use default credentials or partial config
+                firebase_admin.initialize_app(options={
+                    'databaseURL': FIREBASE_DATABASE_URL
+                })
+            
         logger.info("✅ Firebase initialized successfully")
         return firebase
         
