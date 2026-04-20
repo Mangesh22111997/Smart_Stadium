@@ -20,9 +20,11 @@ class TicketBookingRequest(BaseModel):
     """
     user_id: str
     event_id: str
+    num_tickets: int = Field(default=1, gt=0)
     commute_mode: str = Field(..., description="Mode of commute (metro, bus, private, cab, walk)")
     parking_required: bool = Field(default=False, description="Is parking needed?")
     departure_preference: str = Field(default="immediate", description="When to depart (early, immediate, delayed)")
+    food_order_id: Optional[str] = None
 
     @field_validator("commute_mode")
     @classmethod

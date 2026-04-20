@@ -60,13 +60,16 @@ class FoodOrderRequest(BaseModel):
     """
     Model for food order request
     """
-    user_id: UUID
-    ticket_id: Optional[UUID] = None
+    user_id: str
+    ticket_id: Optional[str] = None
     items: List[OrderItem] = Field(..., min_items=1)
     delivery_zone: str = Field(
-        default="center",
-        description="Delivery zone: pillar_1, pillar_2, pillar_3, pillar_4, center"
+        default="Center Booth",
+        description="Delivery zone location name"
     )
+    total_price: Optional[float] = None
+    special_requests: Optional[str] = None
+    status: Optional[str] = "confirmed"
 
     class Config:
         example = {

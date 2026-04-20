@@ -168,6 +168,7 @@ with col2:
                     token = SessionManager.get_session_token()
                     
                     booking_data = {
+                        "user_id": user_id,
                         "event_id": str(event_id),
                         "num_tickets": int(num_tickets),
                         "commute_mode": commute_mode,
