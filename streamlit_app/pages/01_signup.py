@@ -12,7 +12,13 @@ st.set_page_config(page_title="Signup - Smart Stadium", page_icon="📋", layout
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
 from utils.validators import InputValidator
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import (
+    add_background_image, 
+    inject_accessibility_enhancements, 
+    render_keyboard_shortcuts,
+    inject_main_content_start,
+    inject_main_content_end
+)
 import time
 
 # Apply Background and Accessibility Enhancements
@@ -32,6 +38,8 @@ if SessionManager.is_logged_in():
 st.markdown("# 📋 Create Your Account")
 st.markdown("*Join Smart Stadium and start booking events*")
 st.divider()
+
+inject_main_content_start()
 
 api_client = get_api_client()
 

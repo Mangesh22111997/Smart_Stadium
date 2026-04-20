@@ -13,7 +13,7 @@ import pandas as pd
 import plotly.express as px
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 import datetime
 
 # Apply Background and Accessibility Enhancements
@@ -55,6 +55,7 @@ with col2:
         st.switch_page("pages/00_login.py")
 
 st.divider()
+inject_main_content_start()
 
 import random
 import time
@@ -99,6 +100,7 @@ else:
     st.info("📊 Viewing Global System Overview")
 
 st.divider()
+inject_main_content_start()
 
 # Navigation tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
@@ -127,6 +129,7 @@ with tab1:
         st.metric("💰 Revenue", f"₹{45.2 + (jitter/10):.1f}L", f"{18 + random.randint(-3, 3)}%")
     
     st.divider()
+inject_main_content_start()
     
     # Crowd analytics
     col1, col2 = st.columns(2)
@@ -161,6 +164,7 @@ with tab1:
         st.plotly_chart(fig, use_container_width=True)
     
     st.divider()
+inject_main_content_start()
     
     # Recent activity
     st.markdown("### 📝 Live Activity Log")
@@ -210,6 +214,7 @@ with tab2:
                 st.form_submit_button("❌ Cancel", use_container_width=True)
     
     st.divider()
+inject_main_content_start()
     
     # List events
     st.markdown("### Active Events")
@@ -267,3 +272,4 @@ with tab5:
     st.write("**Permissions:**")
     for perm, value in permissions.items():
         st.write(f"- {perm.replace('_', ' ').title()}: {'✅' if value else '❌'}")
+

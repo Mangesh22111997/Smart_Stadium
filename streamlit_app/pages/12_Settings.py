@@ -11,7 +11,7 @@ st.set_page_config(page_title="Settings - Admin", page_icon="⚙️", layout="wi
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 
 # Apply Background and Accessibility Enhancements
 add_background_image()
@@ -35,6 +35,7 @@ if st.button("🚪 Logout"):
     st.switch_page("pages/00_login.py")
 
 st.divider()
+inject_main_content_start()
 
 st.markdown("## Account Information")
 col1, col2 = st.columns(2)
@@ -46,6 +47,7 @@ with col2:
     st.write(f"**User ID:** {SessionManager.get_user_id()}")
 
 st.divider()
+inject_main_content_start()
 
 st.markdown("## Permissions")
 permissions = st.session_state.get("permissions", {})
@@ -54,3 +56,4 @@ for perm, value in permissions.items():
 
 if st.button("📊 Back to Dashboard"):
     st.switch_page("pages/09_admin_dashboard.py")
+

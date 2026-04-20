@@ -11,7 +11,7 @@ st.set_page_config(page_title="Notifications - Smart Stadium", page_icon="🔔",
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 
 # Apply Background and Accessibility Enhancements
 add_background_image()
@@ -36,15 +36,18 @@ if st.button("🚪 Logout"):
     st.switch_page("pages/00_login.py")
 
 st.divider()
+inject_main_content_start()
 
 st.success("✅ **Event Starting Soon!** Cricket Tournament starts in 2 hours")
 st.warning("⚠️ **Gate Alert** - Gate A has congestion. Use Gate B instead")
 st.info("ℹ️ **Order Ready** - Your food order is ready for pickup at Booth 3")
 
 st.divider()
+inject_main_content_start()
 
 st.markdown("### Notification History")
 st.write("No more notifications")
 
 if st.button("🏠 Back to Home"):
     st.switch_page("pages/02_home.py")
+

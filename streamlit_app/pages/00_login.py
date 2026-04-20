@@ -11,7 +11,14 @@ st.set_page_config(page_title="Login - Smart Stadium", page_icon="🔐", layout=
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_form_wrapper
+from utils.ui_helper import (
+    add_background_image, 
+    inject_accessibility_enhancements, 
+    render_keyboard_shortcuts, 
+    inject_form_wrapper,
+    inject_main_content_start,
+    inject_main_content_end
+)
 import time
 
 # Apply Background and Accessibility Enhancements
@@ -32,6 +39,7 @@ if SessionManager.is_logged_in():
 
 st.markdown("# 🔐 Smart Stadium Login")
 st.markdown("*Log in to your account*")
+inject_main_content_start()
 st.divider()
 
 # Tabs for customer and admin login

@@ -12,7 +12,7 @@ st.set_page_config(page_title="Emergency Response - Smart Stadium", page_icon="�
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 from datetime import datetime
 
 # Apply Background and Accessibility Enhancements
@@ -65,6 +65,7 @@ with col4:
         st.switch_page("pages/00_login.py")
 
 st.divider()
+inject_main_content_start()
 
 # SOS Coordinator
 st.markdown("## 🆘 SOS Coordination Center")
@@ -125,6 +126,7 @@ with col2:
             st.balloons()
 
 st.divider()
+inject_main_content_start()
 
 # Gate Control
 st.markdown("## 🚪 Gate Control & Evacuation")
@@ -151,6 +153,7 @@ if selected_gates:
         st.success(f"✅ {action} initiated for: {', '.join(selected_gates)}")
 
 st.divider()
+inject_main_content_start()
 
 # Public Announcements
 if st.session_state.get("show_announcements"):
@@ -184,6 +187,7 @@ if st.session_state.get("show_announcements"):
             st.info(f"Zones: {', '.join(zones) if zones else 'All'}")
 
 st.divider()
+inject_main_content_start()
 
 # Emergency Contacts (if shown)
 if st.session_state.get("show_contacts"):
@@ -210,9 +214,11 @@ if st.session_state.get("show_contacts"):
                     st.info(f"Dialing {number}...")
 
 st.divider()
+inject_main_content_start()
 
 st.markdown("""
 <div style='text-align: center; color: gray; font-size: 12px;'>
     Stay calm. All emergency procedures are in effect. Coordinate with your team.
 </div>
 """, unsafe_allow_html=True)
+

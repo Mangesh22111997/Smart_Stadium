@@ -11,7 +11,7 @@ st.set_page_config(page_title="Bookings - Smart Stadium", page_icon="🎟️", l
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 
 # Apply Background and Accessibility Enhancements
 add_background_image()
@@ -38,14 +38,17 @@ if st.button("🚪 Logout"):
     st.switch_page("pages/00_login.py")
 
 st.divider()
+inject_main_content_start()
 
 st.divider()
+inject_main_content_start()
 
 # Booking History Section
 st.markdown("## 📜 Your Booking History")
 st.markdown("*View and manage your previous ticket reservations*")
     
 st.divider()
+inject_main_content_start()
 st.markdown("## Your Booking History")
 
 # Fetch user's previous bookings
@@ -101,8 +104,10 @@ else:
                         st.rerun()
             
             st.divider()
+inject_main_content_start()
 
 st.divider()
+inject_main_content_start()
 
 col1, col2 = st.columns(2)
 with col1:
@@ -111,3 +116,4 @@ with col1:
 with col2:
     if st.button("🏠 Back to Home", use_container_width=True):
         st.switch_page("pages/02_home.py")
+

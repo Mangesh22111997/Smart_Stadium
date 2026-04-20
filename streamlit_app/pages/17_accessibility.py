@@ -13,7 +13,7 @@ st.set_page_config(
     layout="wide"
 )
 
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 from utils.i18n import language_selector
 
 # Language selection
@@ -30,6 +30,7 @@ with st.sidebar:
 st.markdown("# ♿ Accessibility Statement")
 st.markdown("*Smart Stadium System — WCAG 2.1 Level AA Compliance*")
 st.divider()
+inject_main_content_start()
 
 st.markdown("""
 ## Our Commitment
@@ -109,4 +110,6 @@ We aim to respond to accessibility feedback within 2 business days.
 """)
 
 st.divider()
+inject_main_content_start()
 st.caption("Last reviewed: April 2026 | Smart Stadium System v1.0")
+

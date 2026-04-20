@@ -8,7 +8,7 @@ st.set_page_config(page_title="Book Event - Smart Stadium", page_icon="🎟️",
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 from utils.animation_helper import show_success_animation
 import time
 
@@ -49,6 +49,7 @@ event_id = event.get('event_id')
 # Header
 st.markdown(f"# 🎟️ Booking: {event.get('event_name', 'Unnamed Event')}")
 st.divider()
+inject_main_content_start()
 
 col1, col2 = st.columns([0.6, 0.4])
 
@@ -68,6 +69,7 @@ with col1:
         """)
         
         st.divider()
+inject_main_content_start()
         
         # Food Section
         st.markdown("### 🍔 Food & Beverages")
@@ -106,10 +108,12 @@ with col2:
                 st.write(f"**Time:** {st.session_state.selected_event.get('start_time')}")
             
             st.divider()
+inject_main_content_start()
             
             num_tickets = st.number_input("Number of Tickets", min_value=1, max_value=min(10, available_seats), value=1)
             
             st.divider()
+inject_main_content_start()
             st.markdown("#### Travel & Arrival")
             commute_mode = st.selectbox("How will you arrive?", ["metro", "bus", "private", "cab"])
             
@@ -207,3 +211,4 @@ with col2:
 
 if st.button("← Back"):
     st.switch_page("pages/02_home.py")
+

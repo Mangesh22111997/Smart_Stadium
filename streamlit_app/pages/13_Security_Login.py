@@ -11,7 +11,7 @@ st.set_page_config(page_title="Security Login - Smart Stadium", page_icon="🔐"
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 
 # Apply Background and Accessibility Enhancements
 add_background_image()
@@ -30,6 +30,7 @@ st.markdown("# 🔐 Security Staff Login")
 st.markdown("*Access the security monitoring dashboard*")
 
 st.divider()
+inject_main_content_start()
 
 # Login form
 with st.form("security_login_form"):
@@ -80,8 +81,10 @@ with st.form("security_login_form"):
         st.switch_page("pages/00_login.py")
 
 st.divider()
+inject_main_content_start()
 st.markdown("""
 <div style='text-align: center; color: gray; font-size: 12px;'>
     📞 Need help? Contact your supervisor or the main control room.
 </div>
 """, unsafe_allow_html=True)
+

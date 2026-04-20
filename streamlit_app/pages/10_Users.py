@@ -11,7 +11,7 @@ st.set_page_config(page_title="Users - Admin", page_icon="👥", layout="wide")
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 
 # Apply Background and Accessibility Enhancements
 add_background_image()
@@ -35,6 +35,7 @@ if st.button("🚪 Logout"):
     st.switch_page("pages/00_login.py")
 
 st.divider()
+inject_main_content_start()
 
 api_client = get_api_client()
 
@@ -58,3 +59,4 @@ else:
 
 if st.button("📊 Back to Dashboard"):
     st.switch_page("pages/09_admin_dashboard.py")
+

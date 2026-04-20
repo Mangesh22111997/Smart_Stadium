@@ -11,7 +11,13 @@ st.set_page_config(page_title="Home - Smart Stadium", page_icon="🏠", layout="
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import (
+    add_background_image, 
+    inject_accessibility_enhancements, 
+    render_keyboard_shortcuts,
+    inject_main_content_start,
+    inject_main_content_end
+)
 from utils.i18n import t, language_selector
 import hashlib
 
@@ -71,6 +77,11 @@ st.divider()
 # Profile Menu Dropdown
 if st.session_state.show_profile_menu:
     with st.container():
+        st.markdown(f"# {t('welcome')}, {username}! 👋")
+        st.markdown(f"*{t('dashboard_subtitle')}*")
+        
+        inject_main_content_start()
+        
         st.markdown("### 👤 Profile Menu")
         
         col1, col2 = st.columns(2)

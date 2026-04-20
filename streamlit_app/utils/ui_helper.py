@@ -123,6 +123,7 @@ def inject_accessibility_enhancements() -> None:
     Call this on every page after set_page_config().
     WCAG 2.1 Level AA compliance markers.
     """
+    # 1. Inject Global CSS for accessibility
     st.markdown("""
     <style>
     /* Skip navigation link — visible on keyboard focus, hidden otherwise */
@@ -138,6 +139,7 @@ def inject_accessibility_enhancements() -> None:
         font-weight: 600;
         z-index: 9999;
         text-decoration: none;
+        transition: top 0.2s;
     }
     .skip-nav:focus {
         top: 12px;
@@ -166,34 +168,15 @@ def inject_accessibility_enhancements() -> None:
         }
     }
 
-    /* Ensure text never relies on colour alone */
-    .status-error::before   { content: "✗ "; }
-    .status-success::before { content: "✓ "; }
-    .status-warning::before { content: "⚠ "; }
-
     /* High contrast text ratios (WCAG AA: 4.5:1 minimum) */
     body, .stMarkdown p, .stMarkdown li, label {
-        color: #1a1a1a;   /* #1a1a1a on #f0f2f6 = 14.5:1 ratio */
+        color: #1a1a1a;
     }
     
     @media (prefers-color-scheme: dark) {
         body, .stMarkdown p, .stMarkdown li, label {
             color: #ffffff !important;
         }
-    }
-
-    /* Heading hierarchy enforcement */
-    .stMarkdown h1 { font-size: 2rem;   font-weight: 700; }
-    .stMarkdown h2 { font-size: 1.5rem; font-weight: 600; }
-    .stMarkdown h3 { font-size: 1.25rem;font-weight: 600; }
-
-    /* Button accessible states */
-    .stButton > button:hover  { opacity: 0.9; }
-    .stButton > button:active { transform: scale(0.98); }
-    .stButton > button[disabled] {
-        opacity: 0.5;
-        cursor: not-allowed;
-        pointer-events: none;
     }
 
     /* Live region for dynamic status updates */
@@ -206,8 +189,13 @@ def inject_accessibility_enhancements() -> None:
     }
     </style>
 
+    <!-- Language attribute injection -->
+    <script>
+        document.documentElement.lang = "en";
+    </script>
+
     <!-- Skip Navigation Link -->
-    <a href="#main-content" class="skip-nav" aria-label="Skip to main content">
+    <a href="#main-content-anchor" class="skip-nav" aria-label="Skip to main content">
         Skip to main content
     </a>
 
@@ -217,11 +205,19 @@ def inject_accessibility_enhancements() -> None:
          aria-live="polite"
          aria-atomic="true">
     </div>
-
-    <!-- Main content landmark -->
-    <div id="main-content" role="main" aria-label="Smart Stadium Application">
-    </div>
     """, unsafe_allow_html=True)
+
+def inject_main_content_start() -> None:
+    """
+    Start of the main content landmark.
+    """
+    st.markdown('<div id="main-content-anchor" role="main" aria-label="Main Content Area">', unsafe_allow_html=True)
+
+def inject_main_content_end() -> None:
+    """
+    End of the main content landmark.
+    """
+    st.markdown('</div>', unsafe_allow_html=True)
 
 def render_keyboard_shortcuts() -> None:
     """

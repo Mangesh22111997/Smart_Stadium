@@ -11,7 +11,7 @@ st.set_page_config(page_title="Events - Smart Stadium", page_icon="🎉", layout
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 
 # Apply Background and Accessibility Enhancements
 add_background_image()
@@ -65,6 +65,7 @@ with col3:
         st.switch_page("pages/02_home.py")
 
 st.divider()
+inject_main_content_start()
 
 # Search bar
 search_query = st.text_input(
@@ -85,6 +86,7 @@ with col4:
     availability_filter = st.selectbox("🎟️ Availability", ["Any", "Plenty", "Limited", "Last Few"], key="availability")
 
 st.divider()
+inject_main_content_start()
 
 # Fetch events from backend API (CACHED)
 api_client = get_api_client()
@@ -122,6 +124,7 @@ if not filtered_events:
 else:
     st.markdown(f"### 📊 Showing {len(filtered_events)} events")
     st.divider()
+inject_main_content_start()
     
     # Display events in a grid/list
     for event in filtered_events:
@@ -182,8 +185,10 @@ else:
                 st.error("❌ Sold Out!")
         
         st.divider()
+inject_main_content_start()
 
 st.divider()
+inject_main_content_start()
 st.markdown("""
 <div style='text-align: center; color: gray; font-size: 12px;'>
     🏟️ Smart Stadium | Secure Booking | Real-time Availability
@@ -191,8 +196,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.divider()
+inject_main_content_start()
 st.markdown("""
 <div style='text-align: center; color: gray; font-size: 12px;'>
     🏟️ Smart Stadium | Secure Booking | Real-time Availability
 </div>
 """, unsafe_allow_html=True)
+

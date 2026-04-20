@@ -8,7 +8,7 @@ Terms and Conditions Page
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 
 # Apply Background and Accessibility Enhancements
 add_background_image()
@@ -24,6 +24,7 @@ st.markdown("# 📜 Terms and Conditions")
 st.markdown("*Last Updated: April 19, 2026*")
 
 st.divider()
+inject_main_content_start()
 
 tabs = st.tabs(["Terms & Conditions", "Privacy Policy", "User Agreement"])
 
@@ -162,6 +163,7 @@ with tabs[2]:
     """)
 
 st.divider()
+inject_main_content_start()
 
 col1, col2 = st.columns(2)
 with col1:
@@ -169,3 +171,4 @@ with col1:
         st.switch_page("pages/01_signup.py")
 with col2:
     st.info("✅ By checking the box on the signup page, you agree to these Terms and Conditions")
+

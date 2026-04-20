@@ -11,7 +11,7 @@ st.set_page_config(page_title="Food - Smart Stadium", page_icon="🍔", layout="
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 import time
 
 # Apply Background and Accessibility Enhancements
@@ -46,6 +46,7 @@ if st.button("🚪 Logout"):
     st.switch_page("pages/00_login.py")
 
 st.divider()
+inject_main_content_start()
 
 # Initialize session state for cart
 if "food_cart" not in st.session_state:
@@ -114,6 +115,7 @@ for idx, item in enumerate(display_items):
                     st.success("✅ Added to cart!")
 
 st.divider()
+inject_main_content_start()
 
 # Shopping Cart
 st.markdown("## 🛒 Your Cart")
@@ -138,6 +140,7 @@ else:
                 st.rerun()
     
     st.divider()
+inject_main_content_start()
     
     # Total and checkout
     col_a, col_b = st.columns([0.6, 0.4])
@@ -149,6 +152,7 @@ else:
         st.write("")  # Spacing
     
     st.divider()
+inject_main_content_start()
     
     # Checkout / Selection Form
     if st.session_state.get("in_booking_flow"):
@@ -233,6 +237,7 @@ else:
                     st.rerun()
 
 st.divider()
+inject_main_content_start()
 
 # Order History
 st.markdown("## 📜 Your Order History")
@@ -268,6 +273,7 @@ else:
                     st.info(f"ℹ️ {status.title()}")
 
 st.divider()
+inject_main_content_start()
 
 col1, col2 = st.columns(2)
 with col1:
@@ -276,3 +282,4 @@ with col1:
 with col2:
     if st.button("🏠 Back to Home", use_container_width=True):
         st.switch_page("pages/02_home.py")
+

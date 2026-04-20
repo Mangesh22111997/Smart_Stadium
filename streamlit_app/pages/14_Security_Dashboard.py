@@ -12,7 +12,7 @@ st.set_page_config(page_title="Security Dashboard - Smart Stadium", page_icon="�
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
@@ -45,6 +45,7 @@ import time
 
 # ==================== EVENT SELECTOR ====================
 st.divider()
+inject_main_content_start()
 try:
     api_client = get_api_client()
     events_resp = api_client.list_events(limit=50)
@@ -79,6 +80,7 @@ if st.session_state.get("security_selected_event"):
 else:
     st.info("📊 Viewing Global Security Status")
 st.divider()
+inject_main_content_start()
 
 # Initialize session state
 if "view_mode" not in st.session_state:
@@ -102,6 +104,7 @@ with col3:
         st.switch_page("pages/00_login.py")
 
 st.divider()
+inject_main_content_start()
 
 # Real-time gate monitoring
 st.markdown(f"## 🚪 Gate Status - {curr_event.get('event_name') if st.session_state.get('security_selected_event') else 'All Gates'}")
@@ -143,6 +146,7 @@ if gates:
                 st.rerun()
 
 st.divider()
+inject_main_content_start()
 
 # Alert system
 st.markdown("## ⚠️ Active Alerts")
@@ -163,6 +167,7 @@ for alert in alerts:
         st.info(f"🟡 **{alert['gate']}** - {alert['type']} ({alert['crowd']}% full) - {alert['time']}")
 
 st.divider()
+inject_main_content_start()
 
 # Crowd distribution charts
 st.markdown("## 📈 Crowd Analytics")
@@ -236,6 +241,7 @@ with col2:
     st.plotly_chart(fig2, use_container_width=True)
 
 st.divider()
+inject_main_content_start()
 
 # Incident logging
 if st.session_state.get("view_mode") == "incidents":
@@ -260,6 +266,7 @@ if st.session_state.get("view_mode") == "incidents":
             st.info(f"Type: {incident_type} | Location: {location} | Severity: {severity}")
 
 st.divider()
+inject_main_content_start()
 
 # Quick actions
 st.markdown("## ⚡ Quick Actions")
@@ -286,3 +293,4 @@ if st.session_state.get("show_emergency"):
     if st.button("Acknowledge"):
         st.session_state.show_emergency = False
         st.rerun()
+

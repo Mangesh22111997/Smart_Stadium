@@ -7,7 +7,7 @@ st.set_page_config(page_title="Maps - Smart Stadium", page_icon="🗺️", layou
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_main_content_start, inject_main_content_end
 from utils.maps_helper import StadiumMapHelper
 
 # Apply Background and Accessibility Enhancements
@@ -35,6 +35,7 @@ if st.button("🚪 Logout"):
     st.switch_page("pages/00_login.py")
 
 st.divider()
+inject_main_content_start()
 
 # Navigation tabs
 tab1, tab2, tab3, tab4 = st.tabs(["Stadium Map", "Gate Details", "Parking", "Directions"])
@@ -162,6 +163,7 @@ with tab4:
         )
     
     st.divider()
+inject_main_content_start()
     
     # Get estimates
     estimates = StadiumMapHelper.get_commute_estimates(starting_point)
@@ -177,6 +179,7 @@ with tab4:
         st.metric("Crowd Level", estimates.get("crowding", "N/A"))
     
     st.divider()
+inject_main_content_start()
     
     # Directions text
     st.markdown("### Turn-by-Turn Directions")
@@ -186,6 +189,7 @@ with tab4:
     st.info(f"ℹ️ **Recommendation:** Leave {estimates.get('travel_mode')} at least {estimates.get('estimated_time')} before the event starts.")
 
 st.divider()
+inject_main_content_start()
 
 col1, col2 = st.columns(2)
 with col1:
@@ -194,3 +198,4 @@ with col1:
 with col2:
     if st.button("🏠 Back to Home", use_container_width=True):
         st.switch_page("pages/02_home.py")
+
