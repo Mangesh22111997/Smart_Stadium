@@ -1,7 +1,6 @@
-"""
-Author: Mangesh Wagh
-Email: mangeshwagh2722@gmail.com
-"""
+# Author: Mangesh Wagh
+# Email: mangeshwagh2722@gmail.com
+
 
 """
 Crowd Service - Business logic for crowd monitoring and simulation

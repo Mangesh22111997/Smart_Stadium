@@ -1,7 +1,6 @@
-"""
-Author: Mangesh Wagh
-Email: mangeshwagh2722@gmail.com
-"""
+# Author: Mangesh Wagh
+# Email: mangeshwagh2722@gmail.com
+
 
 #!/usr/bin/env python3
 """

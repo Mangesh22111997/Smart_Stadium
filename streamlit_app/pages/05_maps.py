@@ -1,7 +1,6 @@
-"""
-Author: Mangesh Wagh
-Email: mangeshwagh2722@gmail.com
-"""
+# Author: Mangesh Wagh
+# Email: mangeshwagh2722@gmail.com
+
 
 import streamlit as st
 st.set_page_config(page_title="Maps - Smart Stadium", page_icon="🗺️", layout="wide")
