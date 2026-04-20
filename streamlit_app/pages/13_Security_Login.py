@@ -8,10 +8,11 @@ Security Staff Login Page
 """
 
 import streamlit as st
+st.set_page_config(page_title="Security Login - Smart Stadium", page_icon="🔐", layout="centered")
+
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
 
-st.set_page_config(page_title="Security Login - Smart Stadium", page_icon="🔐", layout="centered")
 
 # Redirect if already logged in
 if SessionManager.is_logged_in() and SessionManager.is_security():

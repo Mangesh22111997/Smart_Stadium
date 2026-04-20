@@ -8,10 +8,11 @@ Users Management Page
 """
 
 import streamlit as st
+st.set_page_config(page_title="Users - Admin", page_icon="👥", layout="wide")
+
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
 
-st.set_page_config(page_title="Users - Admin", page_icon="👥", layout="wide")
 
 if not SessionManager.is_logged_in() or not SessionManager.is_admin():
     st.error("❌ Admin access required")

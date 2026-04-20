@@ -9,12 +9,13 @@ Real-time crowd and gate monitoring
 """
 
 import streamlit as st
+st.set_page_config(page_title="Security Dashboard - Smart Stadium", page_icon="📊", layout="wide")
+
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
-st.set_page_config(page_title="Security Dashboard - Smart Stadium", page_icon="📊", layout="wide")
 
 # Check security access
 if not SessionManager.is_logged_in():

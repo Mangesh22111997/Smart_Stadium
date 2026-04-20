@@ -10,18 +10,17 @@ Multi-page portal for Customer, Admin, and Security
 """
 
 import streamlit as st
-from utils.session_manager import SessionManager
-from utils.ui_helper import add_background_image
-from utils.i18n import language_selector
-import os
-
-# Page configuration
 st.set_page_config(
     page_title="🏟️ Smart Stadium System",
     page_icon="🏟️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+from utils.session_manager import SessionManager
+from utils.ui_helper import add_background_image
+from utils.i18n import language_selector
+import os
 
 # Initialize session
 SessionManager.init_session()

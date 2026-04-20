@@ -8,12 +8,12 @@ Login Page - Customer and Admin Portal Entry
 """
 
 import streamlit as st
+st.set_page_config(page_title="Login - Smart Stadium", page_icon="🔐", layout="centered")
+
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
 from utils.ui_helper import add_background_image
 import time
-
-st.set_page_config(page_title="Login - Smart Stadium", page_icon="🔐", layout="centered")
 
 # Apply Background
 add_background_image()

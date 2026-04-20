@@ -8,8 +8,9 @@ Terms and Conditions Page
 """
 
 import streamlit as st
-
 st.set_page_config(page_title="Terms & Conditions - Smart Stadium", page_icon="📜", layout="wide")
+
+
 
 st.markdown("# 📜 Terms and Conditions")
 st.markdown("*Last Updated: April 19, 2026*")

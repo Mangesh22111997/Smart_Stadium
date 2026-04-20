@@ -8,13 +8,14 @@ Admin Dashboard - Main Admin Portal
 """
 
 import streamlit as st
+st.set_page_config(page_title="Admin Dashboard", page_icon="📊", layout="wide")
+
 import pandas as pd
 import plotly.express as px
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
 import datetime
 
-st.set_page_config(page_title="Admin Dashboard", page_icon="📊", layout="wide")
 
 # Check if logged in and is admin
 if not SessionManager.is_logged_in():

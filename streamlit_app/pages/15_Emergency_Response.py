@@ -9,11 +9,12 @@ Manage emergency situations and coordinated response
 """
 
 import streamlit as st
+st.set_page_config(page_title="Emergency Response - Smart Stadium", page_icon="🚨", layout="wide")
+
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
 from datetime import datetime
 
-st.set_page_config(page_title="Emergency Response - Smart Stadium", page_icon="🚨", layout="wide")
 
 # Check security access
 if not SessionManager.is_logged_in():

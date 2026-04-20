@@ -8,13 +8,14 @@ Home Page - Customer Dashboard
 """
 
 import streamlit as st
+st.set_page_config(page_title="Home - Smart Stadium", page_icon="🏠", layout="wide")
+
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
 from utils.ui_helper import add_background_image
 from utils.i18n import t, language_selector
 import hashlib
 
-st.set_page_config(page_title="Home - Smart Stadium", page_icon="🏠", layout="wide")
 
 # Add Language Selector in Sidebar
 language_selector()

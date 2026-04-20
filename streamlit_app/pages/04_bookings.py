@@ -8,10 +8,11 @@ Ticket Bookings Page
 """
 
 import streamlit as st
+st.set_page_config(page_title="Bookings - Smart Stadium", page_icon="🎟️", layout="wide")
+
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
 
-st.set_page_config(page_title="Bookings - Smart Stadium", page_icon="🎟️", layout="wide")
 
 # Check if logged in
 if not SessionManager.is_logged_in():
