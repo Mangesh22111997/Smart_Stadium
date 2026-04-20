@@ -13,7 +13,21 @@ import pandas as pd
 import plotly.express as px
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
 import datetime
+
+# Apply Background and Accessibility Enhancements
+add_background_image()
+inject_accessibility_enhancements()
+
+# Sidebar shortcuts
+with st.sidebar:
+    render_keyboard_shortcuts()
+
+@st.cache_data(ttl=300, show_spinner=False)
+def fetch_events_cached():
+    """Fetch event catalogue. Cached 5 min to reduce Firebase reads."""
+    return get_api_client().list_events()
 
 
 # Check if logged in and is admin
@@ -47,9 +61,9 @@ import time
 
 # ==================== EVENT SELECTOR ====================
 with st.container():
-    # Fetch events for selector
+    # Fetch events for selector (CACHED)
     try:
-        events_resp = api_client.list_events(limit=50)
+        events_resp = fetch_events_cached()
         all_events = events_resp.get("events", []) if isinstance(events_resp, dict) else []
         
         # Filter for LIVE events (today)

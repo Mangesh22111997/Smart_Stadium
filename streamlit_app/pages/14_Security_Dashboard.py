@@ -12,8 +12,17 @@ st.set_page_config(page_title="Security Dashboard - Smart Stadium", page_icon="ð
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
+
+# Apply Background and Accessibility Enhancements
+add_background_image()
+inject_accessibility_enhancements()
+
+# Sidebar shortcuts
+with st.sidebar:
+    render_keyboard_shortcuts()
 
 
 # Check security access

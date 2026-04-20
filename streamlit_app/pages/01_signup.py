@@ -12,11 +12,16 @@ st.set_page_config(page_title="Signup - Smart Stadium", page_icon="📋", layout
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
 from utils.validators import InputValidator
-from utils.ui_helper import add_background_image
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
 import time
 
-# Apply Background
+# Apply Background and Accessibility Enhancements
 add_background_image()
+inject_accessibility_enhancements()
+
+# Sidebar shortcuts
+with st.sidebar:
+    render_keyboard_shortcuts()
 
 # Check if already logged in
 if SessionManager.is_logged_in():

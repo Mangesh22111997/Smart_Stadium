@@ -11,6 +11,15 @@ st.set_page_config(page_title="Gates - Admin", page_icon="🚪", layout="wide")
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
+
+# Apply Background and Accessibility Enhancements
+add_background_image()
+inject_accessibility_enhancements()
+
+# Sidebar shortcuts
+with st.sidebar:
+    render_keyboard_shortcuts()
 
 
 if not SessionManager.is_logged_in() or not SessionManager.is_admin():

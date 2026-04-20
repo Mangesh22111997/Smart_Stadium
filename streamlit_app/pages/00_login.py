@@ -11,11 +11,16 @@ st.set_page_config(page_title="Login - Smart Stadium", page_icon="🔐", layout=
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts, inject_form_wrapper
 import time
 
-# Apply Background
+# Apply Background and Accessibility Enhancements
 add_background_image()
+inject_accessibility_enhancements()
+
+# Sidebar shortcuts
+with st.sidebar:
+    render_keyboard_shortcuts()
 
 # Check if already logged in
 if SessionManager.is_logged_in():
@@ -36,8 +41,7 @@ api_client = get_api_client()
 
 # ==================== CUSTOMER LOGIN ====================
 with tab1:
-    st.markdown("### Customer Portal")
-    
+    inject_form_wrapper("Customer Login Form", is_open=True)
     with st.form("customer_login_form"):
         username = st.text_input(
             "Username or Email",

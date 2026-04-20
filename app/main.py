@@ -118,6 +118,27 @@ async def audit_log_middleware(request: Request, call_next):
     return response
 
 
+@app.middleware("http")
+async def add_cache_headers(request: Request, call_next):
+    """
+    Add appropriate Cache-Control headers to API responses.
+    Static data (events, menu) gets longer TTL; dynamic data (gates, crowd) is no-cache.
+    """
+    response = await call_next(request)
+    path = request.url.path
+
+    if any(path.startswith(p) for p in ["/events/", "/food/menu"]):
+        # Static-ish data — cache for 5 minutes
+        response.headers["Cache-Control"] = "public, max-age=300"
+    elif any(path.startswith(p) for p in ["/gates/", "/crowd/", "/health"]):
+        # Dynamic data — always fresh
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    else:
+        response.headers["Cache-Control"] = "private, max-age=60"
+
+    return response
+
+
 # ============================================================================
 # ROUTERS
 # ============================================================================

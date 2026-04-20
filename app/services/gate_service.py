@@ -214,6 +214,27 @@ class GateService:
         # Log with ML context if available
         ml_context = f" [ML: pred_q10={ml_predictions[assigned_gate_id].get('predicted_queue_t10', 'N/A') if ml_predictions[assigned_gate_id] else 'N/A'}]" if ML_ENABLED else ""
         print(f"✅ Gate assigned: {assigned_gate_id} to user {request.user_id} (Ticket: {request.ticket_id}){ml_context}")
+        
+        # Real-time Push Notification via FCM
+        try:
+            from app.services.fcm_service import FCMService
+            from app.config.firebase_config import get_db_connection, Collections
+            
+            db = get_db_connection()
+            # Retrieve user's FCM token (stored at registration)
+            user_fcm_token = db.child(Collections.USERS).child(str(request.user_id)).child("fcm_token").get().val()
+            
+            if user_fcm_token:
+                FCMService.send_gate_notification(
+                    fcm_token=user_fcm_token,
+                    gate_id=assigned_gate_id,
+                    queue_depth=assigned_gate.current_count
+                )
+                print(f"📲 FCM notification sent to user {request.user_id}")
+        except Exception as e:
+            # Non-blocking FCM failure
+            print(f"⚠️ FCM notification failed: {e}")
+            
         return assignment
 
     @staticmethod
@@ -426,6 +447,26 @@ class GateService:
         gates_db[new_gate_id].assignments[ticket_id] = assignment
         
         print(f"✅ Gate reassigned: {old_gate_id} → {new_gate_id} for ticket {ticket_id}")
+        
+        # Real-time Push Notification for Rerouting
+        try:
+            from app.services.fcm_service import FCMService
+            from app.config.firebase_config import get_db_connection, Collections
+            
+            db = get_db_connection()
+            user_fcm_token = db.child(Collections.USERS).child(str(assignment.user_id)).child("fcm_token").get().val()
+            
+            if user_fcm_token:
+                FCMService.send_crowd_warning(
+                    fcm_token=user_fcm_token,
+                    gate_id=old_gate_id,
+                    capacity_percent=95,  # Threshold for reassignment
+                    alternate_gate=new_gate_id
+                )
+                print(f"📲 FCM reroute warning sent to user {assignment.user_id}")
+        except Exception as e:
+            print(f"⚠️ FCM reroute notification failed: {e}")
+            
         return assignment
 
     @staticmethod

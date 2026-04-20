@@ -143,3 +143,20 @@ class Collections:
     NOTIFICATIONS = "notifications"
     STAFF = "staff"
     BOOTH_ALLOCATION = "booth_allocation"
+
+import threading
+
+_db_lock = threading.Lock()
+_db_instance = None
+
+def get_db_connection_pooled():
+    """
+    Thread-safe database connection with singleton pattern.
+    Prevents creating multiple Firebase connections under concurrent load.
+    """
+    global _db_instance
+    if _db_instance is None:
+        with _db_lock:
+            if _db_instance is None:   # Double-checked locking
+                _db_instance = get_firebase_app().database()
+    return _db_instance

@@ -11,8 +11,21 @@ st.set_page_config(page_title="Food - Smart Stadium", page_icon="🍔", layout="
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
 import time
+
+# Apply Background and Accessibility Enhancements
+add_background_image()
+inject_accessibility_enhancements()
+
+# Sidebar shortcuts
+with st.sidebar:
+    render_keyboard_shortcuts()
+
+@st.cache_data(ttl=600, show_spinner=False)
+def fetch_menu_cached():
+    """Fetch food menu. Cached 10 min — menu rarely changes during an event."""
+    return get_api_client().get_food_menu()
 
 
 if not SessionManager.is_logged_in():
@@ -40,9 +53,9 @@ if "food_cart" not in st.session_state:
 if "cart_total" not in st.session_state:
     st.session_state.cart_total = 0
 
-# Get menu from API
+# Get menu from API (CACHED)
 api_client = get_api_client()
-menu_response = api_client.get_food_menu()
+menu_response = fetch_menu_cached()
 
 if "error" in menu_response and not menu_response.get("items"):
     # Use default menu if API fails

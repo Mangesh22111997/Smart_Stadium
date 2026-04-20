@@ -11,13 +11,14 @@ st.set_page_config(page_title="Home - Smart Stadium", page_icon="🏠", layout="
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
 from utils.i18n import t, language_selector
 import hashlib
 
 
-# Add Language Selector in Sidebar
-language_selector()
+# Apply Background and Accessibility Enhancements
+add_background_image()
+inject_accessibility_enhancements()
 
 # Check if logged in
 if not SessionManager.is_logged_in():
@@ -26,8 +27,12 @@ if not SessionManager.is_logged_in():
         st.switch_page("pages/00_login.py")
     st.stop()
 
-# Apply Background
-add_background_image()
+# Add Language Selector in Sidebar
+language_selector()
+
+# Sidebar shortcuts
+with st.sidebar:
+    render_keyboard_shortcuts()
 
 # Initialize session state
 if "show_profile_menu" not in st.session_state:

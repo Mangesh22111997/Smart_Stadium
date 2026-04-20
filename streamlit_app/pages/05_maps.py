@@ -7,8 +7,19 @@ st.set_page_config(page_title="Maps - Smart Stadium", page_icon="🗺️", layou
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
 from utils.maps_helper import StadiumMapHelper
 
+# Apply Background and Accessibility Enhancements
+add_background_image()
+inject_accessibility_enhancements()
+
+# Sidebar shortcuts
+with st.sidebar:
+    render_keyboard_shortcuts()
+
+# Define default highlighted gate if not in session
+highlighted_gate = st.session_state.get("highlighted_gate", "None")
 
 if not SessionManager.is_logged_in():
     st.error("❌ Please log in first")

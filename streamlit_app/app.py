@@ -17,7 +17,7 @@ st.set_page_config(
 )
 
 from utils.session_manager import SessionManager
-from utils.ui_helper import add_background_image
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
 from utils.i18n import language_selector
 import os
 
@@ -27,8 +27,13 @@ SessionManager.init_session()
 # Apply Global Language Selector
 language_selector()
 
-# Apply Background Image
+# Apply Background and Accessibility Enhancements
 add_background_image()
+inject_accessibility_enhancements()
+
+# Sidebar shortcuts
+with st.sidebar:
+    render_keyboard_shortcuts()
 
 # Header
 col1, col2 = st.columns([0.8, 0.2])

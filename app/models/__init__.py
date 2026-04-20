@@ -1,5 +1,5 @@
-# Author: Mangesh Wagh
-# Email: mangeshwagh2722@gmail.com
-
-
-"""Models module for Pydantic data models"""
+"""Pydantic data models for Smart Stadium API."""
+__all__ = [
+    "user", "ticket", "gate", "crowd", "food", "emergency",
+    "notification", "reassignment", "staff_dashboard", "booth_allocation",
+]

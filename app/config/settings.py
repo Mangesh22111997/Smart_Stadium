@@ -10,8 +10,12 @@ Locally: set via .env file (never committed).
 
 import os
 from dotenv import load_dotenv
+from app.utils.secret_manager import load_secrets_to_env
 
-load_dotenv()   # no-op when env vars already set (Cloud Run)
+# 1. Try loading from Google Secret Manager (priority)
+# 2. Fall back to .env if Secret Manager is unavailable
+load_secrets_to_env()
+load_dotenv()
 
 # Firebase
 FIREBASE_API_KEY            = os.getenv("FIREBASE_API_KEY")

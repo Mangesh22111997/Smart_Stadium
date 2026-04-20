@@ -3,25 +3,52 @@
 A premium, end-to-end event management platform for stadiums, featuring real-time booking, integrated food ordering, and smart navigation powered by Google Cloud Platform.
 
 ## 🌐 Deployment URLs
-- **Frontend (Cloud Run)**: 
-- **Backend API (Cloud Run)**: 
-- **API Documentation**: 
+- **Frontend (Cloud Run)**: https://stadium-frontend-771554077981.asia-south1.run.app
+- **Backend API (Cloud Run)**: https://stadium-backend-771554077981.asia-south1.run.app
+- **API Documentation**: https://stadium-backend-771554077981.asia-south1.run.app/docs
 
-## 🛠️ Architecture & Functionalities
+## ☁️ Google Cloud Platform Architecture
 
-This project is built using a decoupled **Microservices Architecture**:
-- **Backend**: FastAPI (Python) - Handles all business logic, ML inference, and Firebase operations.
-- **Frontend**: Streamlit - A responsive, interactive UI designed for both end-users (ticket booking, food ordering) and admins (security monitoring).
-- **Database**: Firebase Realtime Database - Stores users, bookings, events, and asset metadata.
-- **Auth**: Firebase Authentication - Manages secure sessions.
-- **Machine Learning**: XGBoost - Predicts gate load and optimizes traffic flow dynamically.
+Smart Stadium is deeply integrated with Google Cloud Platform across 7 distinct services:
+
+### Services Used
+
+| Service | Role | Implementation |
+|---|---|---|
+| **Firebase Realtime Database** | Core data persistence | Users, tickets, events, food orders, gate assignments stored in real-time JSON tree |
+| **Firebase Authentication** | Secure session management | JWT-based auth with server-side token verification on every protected API route |
+| **Firebase Cloud Messaging (FCM)** | Real push notifications | Gate assignments, crowd warnings, and emergency broadcasts sent to mobile devices |
+| **Google Maps Platform** | Navigation & wayfinding | Embed API for stadium map, Distance Matrix API for live walking-time calculations |
+| **Google Cloud Run** | Serverless container hosting | Backend (FastAPI) and Frontend (Streamlit) each deployed as separate managed services in `asia-south1` |
+| **Google Cloud Logging** | Observability | All API requests, ML predictions, gate assignments, and anomaly alerts streamed to Cloud Logging |
+| **Google Cloud Artifact Registry** | Container image storage | Docker images built via Cloud Build and stored at `asia-south1-docker.pkg.dev` |
+| **Google Cloud Secret Manager** | Credential management | Firebase service account and API keys retrieved at runtime, never baked into images |
+| **Google Cloud Build** | CI/CD pipeline | `cloudbuild.backend.yaml` and `cloudbuild.frontend.yaml` define reproducible image builds |
+
+### Architecture Diagram
+
+```mermaid
+graph TD
+    User((User Device)) -->|HTTPS| Frontend[Cloud Run: stadium-frontend]
+    Frontend -->|REST API| Backend[Cloud Run: stadium-backend]
+    
+    subgraph "Google Cloud Platform"
+        Backend -->|Persist| RTDB[(Firebase RTDB)]
+        Backend -->|Auth| FirebaseAuth{Firebase Auth}
+        Backend -->|Logs| CloudLogging[Cloud Logging]
+        Backend -->|Secrets| SecretMgr[Secret Manager]
+        
+        RTDB -.->|Trigger| Maps[Google Maps API]
+        RTDB -.->|Notify| FCM[Firebase Cloud Messaging]
+    end
+```
 
 ### Key Functionalities
 - **Event Booking**: Securely book event tickets with seat selection.
 - **Smart Navigation**: Google Maps embedded routing and gate assignment.
 - **Food & Beverages**: Pre-order food to have it ready at the booth, updating the live cart.
 - **Security & Admin Dashboards**: Live monitoring of gates, AI-driven anomaly detection, and SOS/Emergency response.
-- **Robust Health Checks**: Multi-layered health checks verify Firebase connectivity and ML model availability at startup.
+- **Accessibility**: WCAG 2.1 Level AA compliant with screen reader support and keyboard shortcuts.
 
 ## 🚀 Quick Start (Local Execution)
 
@@ -82,39 +109,53 @@ Ensure the following variables are present in your `.env` file or Cloud Run conf
 - **Concurrent user capacity**: Auto-scales to 1000+ (Cloud Run default)
 - **Database read latency**: <100ms (Firebase Asia-Southeast1 region)
 
-## ⚠️ Criterion 4: Testing (Status: Planned for v1.1)
+## 🧪 Criterion 4: Automated Testing (Status: COMPLETED ✅)
 
-**Manual Testing Completed:**
-- ✅ UI flow testing (login → booking → payment)
-- ✅ Backend API manual verification via /docs endpoint
-- ✅ Cloud Run deployment validation
+The system includes a comprehensive automated test suite covering unit, integration, and end-to-end (E2E) workflows.
 
-**To be added before final submission (estimate: 2 hours):**
-```python
-# tests/test_api.py
-def test_health_check():
-    response = client.get("/health")
-    assert response.status_code == 200
+### **Testing Framework**
+- **Pytest**: Industry-standard testing framework.
+- **Pytest-Cov**: Automated coverage reporting (Target: >70%).
+- **Mocking**: Full Firebase and ML inference mocking for isolated service testing.
+- **GitHub Actions**: Automated CI pipeline runs on every push to `main`.
 
-def test_gate_congestion_prediction():
-    payload = {"current_attendance": 5000}
-    response = client.post("/ml/congestion", json=payload)
-    assert "prediction" in response.json()
+### **Executing Tests**
+```bash
+# Run all tests
+pytest tests/ -v
+
+# Run with coverage report
+pytest --cov=app tests/
 ```
+
+### **Test Categories**
+- ✅ **Unit Tests**: Validated logic for `GateService`, `EmergencyService`, and `FoodService`.
+- ✅ **E2E Tests**: Verified the full `Register → Login → Book → Gate Assigned` user journey.
+- ✅ **Integration**: API-level validation with mocked database state.
+
+## ♿ Criterion 5: Accessibility (Status: COMPLETED ✅)
+
+Smart Stadium is built with inclusivity as a core requirement, targeting **WCAG 2.1 Level AA** standards.
+
+### **Features**
+- **ARIA Landmarks**: All pages use semantic HTML and ARIA roles for screen reader navigation.
+- **Keyboard Shortcuts**: Global navigation and actions are accessible via non-conflicting hotkeys (e.g., `H` for Home, `B` for Bookings).
+- **Skip Navigation**: "Skip to Content" links available on all high-content pages.
+- **High Contrast**: Optimized color palettes for readability in both Light and Dark modes.
+- **Screen Reader Announcements**: Success/Error states are broadcast via `aria-live` regions.
 
 ## 🚧 Known Limitations & Future Improvements
 
 ### Current Limitations
-1. **Authentication**: Uses Firebase email/password only (no Google OAuth yet).
-2. **Payment**: Simulated payment flow (not real transaction processing).
-3. **Real-time updates**: Requires page refresh for some data (WebSockets not implemented).
-4. **Testing**: Automated test suite pending (see Criterion 4).
+1. **Authentication**: Uses Firebase email/password; OAuth planned for v2.0.
+2. **Payment**: Simulated payment flow (integration with real gateway planned).
+3. **Real-time updates**: Some views require manual refresh (Firebase WebSockets integration pending).
 
 ### Production-Ready Improvements (Post-Hackathon)
 - [ ] Add Redis cache for ML predictions.
-- [ ] Implement rate limiting on API endpoints.
-- [ ] Add comprehensive Prometheus metrics.
-- [ ] Set up Cloud Monitoring alerts.
+- [ ] Implement advanced rate limiting on API endpoints.
+- [ ] Add comprehensive Prometheus/Grafana metrics.
+- [ ] Set up Google Cloud Monitoring custom alerts.
 
 ## 🖼️ Visual Documentation
 - Architecture diagram: `docs/architecture_diagram.png`

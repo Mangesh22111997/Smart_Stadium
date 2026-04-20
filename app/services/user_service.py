@@ -139,7 +139,7 @@ class UserService:
         return len(users_db)
 
     @staticmethod
-    def clear_all():
+    def clear_all() -> None:
         """
         Clear all users (for testing)
         """

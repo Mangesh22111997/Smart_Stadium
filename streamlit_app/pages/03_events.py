@@ -11,8 +11,20 @@ st.set_page_config(page_title="Events - Smart Stadium", page_icon="🎉", layout
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
 
+# Apply Background and Accessibility Enhancements
+add_background_image()
+inject_accessibility_enhancements()
+
+# Sidebar shortcuts
+with st.sidebar:
+    render_keyboard_shortcuts()
+
+@st.cache_data(ttl=300, show_spinner=False)
+def fetch_events_cached():
+    """Fetch event catalogue. Cached 5 min to reduce Firebase reads."""
+    return get_api_client().list_events()
 
 # Check if logged in
 if not SessionManager.is_logged_in():
@@ -20,9 +32,6 @@ if not SessionManager.is_logged_in():
     if st.button("🔐 Go to Login"):
         st.switch_page("pages/00_login.py")
     st.stop()
-
-# Apply Background
-add_background_image()
 
 # Additional Page styling
 st.markdown("""
@@ -77,9 +86,9 @@ with col4:
 
 st.divider()
 
-# Fetch events from backend API
+# Fetch events from backend API (CACHED)
 api_client = get_api_client()
-events_response = api_client.list_events(limit=50)
+events_response = fetch_events_cached()
 
 if "error" in events_response and events_response.get("events") is None:
     st.error(f"❌ Failed to fetch events: {events_response.get('error')}")

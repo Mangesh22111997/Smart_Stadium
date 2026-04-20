@@ -8,9 +8,17 @@ st.set_page_config(page_title="Book Event - Smart Stadium", page_icon="🎟️",
 
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client
-from utils.ui_helper import add_background_image
+from utils.ui_helper import add_background_image, inject_accessibility_enhancements, render_keyboard_shortcuts
 from utils.animation_helper import show_success_animation
 import time
+
+# Apply Background and Accessibility Enhancements
+add_background_image()
+inject_accessibility_enhancements()
+
+# Sidebar shortcuts
+with st.sidebar:
+    render_keyboard_shortcuts()
 
 
 # Check if logged in
