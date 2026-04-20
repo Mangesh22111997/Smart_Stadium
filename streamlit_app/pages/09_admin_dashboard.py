@@ -42,6 +42,37 @@ with col2:
 
 st.divider()
 
+# ==================== EVENT SELECTOR ====================
+with st.container():
+    # Fetch events for selector
+    try:
+        events_resp = api_client.list_events(limit=10)
+        events_list = events_resp.get("events", []) if isinstance(events_resp, dict) else []
+        event_names = [e.get("event_name") for e in events_list]
+    except:
+        events_list = []
+        event_names = []
+
+    if event_names:
+        col1, col2 = st.columns([0.7, 0.3])
+        with col1:
+            selected_event_name = st.selectbox("🎯 Select Event to Monitor:", event_names, index=0)
+            st.session_state.admin_selected_event = next((e for e in events_list if e.get("event_name") == selected_event_name), None)
+        with col2:
+            if st.session_state.get("admin_selected_event"):
+                e = st.session_state.admin_selected_event
+                st.info(f"**Status:** {e.get('status', 'Live')}")
+    else:
+        st.warning("⚠️ No active events found in the system.")
+
+if st.session_state.get("admin_selected_event"):
+    curr_event = st.session_state.admin_selected_event
+    st.success(f"📍 **Currently Viewing:** {curr_event.get('event_name')} @ {curr_event.get('venue_type')}")
+else:
+    st.info("📊 Viewing Global System Overview")
+
+st.divider()
+
 # Navigation tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📊 Dashboard",
@@ -188,7 +219,7 @@ with tab5:
     
     st.markdown("### Permissions")
     admin_type = SessionManager.get_admin_type()
-    permissions = SessionManager._session_state.get(SessionManager.PERMISSIONS, {})
+    permissions = st.session_state.get(SessionManager.PERMISSIONS, {})
     
     st.write(f"**Admin Type:** {admin_type}")
     st.write("**Permissions:**")

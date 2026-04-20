@@ -31,6 +31,33 @@ if user_role not in ["security", "moderator", "superadmin"]:
 st.markdown("# 📊 Security Monitoring Dashboard")
 st.markdown(f"Logged in as: **{SessionManager.get_username()}** ({user_role.title()})")
 
+# ==================== EVENT SELECTOR ====================
+st.divider()
+try:
+    api_client = get_api_client()
+    events_resp = api_client.list_events(limit=10)
+    events_list = events_resp.get("events", []) if isinstance(events_resp, dict) else []
+    event_names = [e.get("event_name") for e in events_list]
+except:
+    events_list = []
+    event_names = []
+
+if event_names:
+    col1, col2 = st.columns([0.7, 0.3])
+    with col1:
+        selected_event_name = st.selectbox("🛡️ Select Event to Monitor:", event_names, index=0)
+        st.session_state.security_selected_event = next((e for e in events_list if e.get("event_name") == selected_event_name), None)
+    with col2:
+        if st.session_state.get("security_selected_event"):
+            st.info(f"📍 Viewing Live Status")
+
+if st.session_state.get("security_selected_event"):
+    curr_event = st.session_state.security_selected_event
+    st.success(f"🔍 **Monitoring Activity for:** {curr_event.get('event_name')}")
+else:
+    st.info("📊 Viewing Global Security Status")
+st.divider()
+
 # Initialize session state
 if "view_mode" not in st.session_state:
     st.session_state.view_mode = None

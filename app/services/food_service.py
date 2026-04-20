@@ -105,7 +105,7 @@ import string
 # ============================================================================
 
 orders_db: Dict[str, FoodOrder] = {}
-user_orders: Dict[UUID, List[str]] = {}
+user_orders: Dict[str, List[str]] = {}
 
 
 # ============================================================================
@@ -295,7 +295,7 @@ class FoodService:
         return orders_db.get(order_id)
 
     @staticmethod
-    def get_user_orders(user_id: UUID) -> List[FoodOrder]:
+    def get_user_orders(user_id: str) -> List[FoodOrder]:
         """
         Get all orders for a user
         

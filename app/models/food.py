@@ -108,8 +108,8 @@ class FoodOrderResponse(BaseModel):
     Model for food order response
     """
     order_id: str
-    user_id: UUID
-    ticket_id: Optional[UUID] = None
+    user_id: str
+    ticket_id: Optional[str] = None
     items: List[OrderItem]
     booth_id: str
     delivery_zone: str
@@ -178,8 +178,8 @@ class FoodOrder(BaseModel):
     Internal Food Order model for storage
     """
     order_id: str
-    user_id: UUID
-    ticket_id: Optional[UUID] = None
+    user_id: str
+    ticket_id: Optional[str] = None
     items: List[OrderItem]
     booth_id: str
     delivery_zone: str
@@ -200,7 +200,7 @@ class BoothStatus(BaseModel):
     booth_id: str
     current_orders: int
     max_capacity: int
-    orders: List[UUID] = Field(default_factory=list)
+    orders: List[str] = Field(default_factory=list)
     last_updated: datetime = Field(default_factory=datetime.now)
 
     class Config:
