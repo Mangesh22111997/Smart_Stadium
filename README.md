@@ -129,3 +129,7 @@ def test_gate_congestion_prediction():
 
 ---
 Built for the **Hack2Skill Google Challenge 2026**.
+
+## 👨‍💻 Author
+**Mangesh Wagh**
+- 📧 Email: mangeshwagh2722@gmail.com
