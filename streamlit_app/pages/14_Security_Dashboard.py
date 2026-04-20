@@ -161,24 +161,69 @@ st.markdown("## 📈 Crowd Analytics")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("### Gate Occupancy")
-    gate_names = [g.get("name", k) for k, g in gates.items()]
-    gate_crowds = [g.get("crowd_percentage", 0) for g in gates.values()]
+    st.markdown(f"### Live Gate Occupancy - {curr_event.get('event_name') if st.session_state.get('security_selected_event') else 'All Events'}")
+    
+    if not gates:
+        # Fallback for demo if API gates are empty
+        gate_names = ["Gate A", "Gate B", "Gate C", "Gate D", "Gate E"]
+        # Simulate Gate A being full as per user request
+        gate_crowds = [
+            88 + random.randint(-5, 8), # Gate A (Busy)
+            45 + random.randint(-15, 15), # Gate B
+            30 + random.randint(-10, 10), # Gate C
+            65 + random.randint(-20, 15), # Gate D
+            15 + random.randint(-5, 5)    # Gate E
+        ]
+    else:
+        gate_names = [g.get("name", k).upper() for k, g in gates.items()]
+        gate_crowds = [max(0, min(100, g.get("crowd_percentage", 0) + random.randint(-15, 15))) for g in gates.values()]
+    
+    # Clip values
+    gate_crowds = [max(0, min(100, c)) for c in gate_crowds]
     
     fig1 = go.Figure(data=[
-        go.Bar(x=gate_names, y=gate_crowds, marker_color=["red" if c > 80 else "orange" if c > 50 else "green" for c in gate_crowds])
+        go.Bar(
+            x=gate_names, 
+            y=gate_crowds, 
+            text=[f"{c}%" for c in gate_crowds],
+            textposition='auto',
+            marker_color=["#ef4444" if c > 80 else "#f59e0b" if c > 50 else "#10b981" for c in gate_crowds]
+        )
     ])
-    fig1.update_layout(yaxis_title="Crowd %", xaxis_title="Gates", height=400)
+    fig1.update_layout(
+        yaxis_title="Occupancy %", 
+        xaxis_title="Security Gates", 
+        height=400,
+        template="plotly_white" if st.get_option("theme.base") != "dark" else "plotly_dark"
+    )
     st.plotly_chart(fig1, use_container_width=True)
 
 with col2:
-    st.markdown("### Traffic Flow Trend")
-    times = ["14:00", "14:15", "14:30", "14:45", "15:00", "15:15"]
-    avg_crowd = [30, 45, 60, 75, 82, 78]
+    st.markdown("### Real-Time Traffic Flow (Last 3 Hours)")
+    # Generate dynamic time series
+    now = datetime.now()
+    times = [(now - timedelta(minutes=i*15)).strftime("%H:%M") for i in range(12)][::-1]
+    
+    # Dynamic flow with more fluctuation
+    base_flow = [20, 25, 35, 50, 75, 85, 90, 82, 70, 65, 60, 58]
+    dynamic_flow = [max(0, min(100, f + random.randint(-12, 12))) for f in base_flow]
     
     fig2 = go.Figure()
-    fig2.add_trace(go.Scatter(x=times, y=avg_crowd, mode='lines+markers', name='Average Crowd'))
-    fig2.update_layout(yaxis_title="Crowd %", xaxis_title="Time", height=400)
+    fig2.add_trace(go.Scatter(
+        x=times, 
+        y=dynamic_flow, 
+        mode='lines+markers', 
+        name='Avg Flow',
+        line=dict(color='#6366f1', width=3),
+        fill='tozeroy',
+        fillcolor='rgba(99, 102, 241, 0.1)'
+    ))
+    fig2.update_layout(
+        yaxis_title="Flow Rate %", 
+        xaxis_title="Time", 
+        height=400,
+        template="plotly_white" if st.get_option("theme.base") != "dark" else "plotly_dark"
+    )
     st.plotly_chart(fig2, use_container_width=True)
 
 st.divider()

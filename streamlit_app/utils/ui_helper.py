@@ -33,13 +33,28 @@ def add_background_image():
         bg_style = f"""
         <style>
         [data-testid="stAppViewContainer"] {{
-            background-image: linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), url("data:image/png;base64,{img_base64}");
+            background-image: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url("data:image/png;base64,{img_base64}");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
         }}
         
+        /* Dark mode overrides */
+        @media (prefers-color-scheme: dark) {{
+            [data-testid="stAppViewContainer"] {{
+                background-image: linear-gradient(rgba(20, 20, 20, 0.85), rgba(20, 20, 20, 0.85)), url("data:image/png;base64,{img_base64}");
+            }}
+            .stContainer, .content-card, .event-card, .header-container {{
+                background: rgba(30, 30, 30, 0.9) !important;
+                color: #ffffff !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }}
+            h1, h2, h3, h4, p, span, label {{
+                color: #ffffff !important;
+            }}
+        }}
+
         [data-testid="stHeader"] {{
             background: rgba(0,0,0,0);
         }}
@@ -50,7 +65,7 @@ def add_background_image():
         
         /* Premium card styling for containers */
         .stContainer, .content-card, .event-card, .header-container {{
-            background: rgba(255, 255, 255, 0.96) !important;
+            background: rgba(255, 255, 255, 0.96);
             border-radius: 15px !important;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
             backdrop-filter: blur(15px);
@@ -61,7 +76,6 @@ def add_background_image():
         
         /* Accessible typography for headings */
         h1, h2, h3, h4 {{
-            color: #1a1a1a !important;
             text-shadow: none !important;
         }}
         
@@ -75,11 +89,10 @@ def add_background_image():
         .stButton > button {{
             min-height: 48px !important;
             min-width: 120px !important;
-            font-size: 16px !important;   /* Prevents iOS auto-zoom on tap */
+            font-size: 16px !important;
             border-radius: 8px !important;
         }}
 
-        /* Minimum input height for comfortable outdoor use */
         .stTextInput > div > div > input,
         .stSelectbox > div > div > select {{
             min-height: 44px !important;

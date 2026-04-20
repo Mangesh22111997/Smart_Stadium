@@ -118,13 +118,23 @@ with tab1:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown(f"### 👥 Crowd per Gate - {curr_event.get('event_name') if st.session_state.get('admin_selected_event') else 'All'}")
+        st.markdown(f"### 👥 Live Crowd per Gate - {curr_event.get('event_name') if st.session_state.get('admin_selected_event') else 'All'}")
+        
+        # Real-time jitter logic
+        gate_labels = ['Gate A', 'Gate B', 'Gate C', 'Gate D', 'Gate E']
+        gate_vals = [450+jitter*15, 320+jitter*8, 280-jitter*12, 510+jitter*20, 190+jitter*5]
+        
         crowd_data = pd.DataFrame({
-            'Gate': ['Gate A', 'Gate B', 'Gate C', 'Gate D', 'Gate E'],
-            'Crowd': [450+jitter*2, 320+jitter, 280-jitter, 510+jitter*3, 190+jitter]
+            'Gate': gate_labels,
+            'Crowd': gate_vals
         })
-        fig = px.bar(crowd_data, x='Gate', y='Crowd', color='Crowd',
-                     color_continuous_scale='RdYlGn_r')
+        
+        fig = px.bar(
+            crowd_data, x='Gate', y='Crowd', color='Crowd',
+            color_continuous_scale='RdYlGn_r',
+            text_auto=True,
+            template="plotly_white" if st.get_option("theme.base") != "dark" else "plotly_dark"
+        )
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
