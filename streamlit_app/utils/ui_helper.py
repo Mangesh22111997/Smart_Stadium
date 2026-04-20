@@ -2,7 +2,6 @@
 # Email: mangeshwagh2722@gmail.com
 
 
-
 import streamlit as st
 import traceback
 from contextlib import contextmanager
@@ -117,6 +116,7 @@ def add_background_image():
         }
         </style>
         """, unsafe_allow_html=True)
+
 def inject_accessibility_enhancements() -> None:
     """
     Inject ARIA roles, skip navigation, and screen reader support.
@@ -229,7 +229,7 @@ def render_keyboard_shortcuts() -> None:
     Satisfies WCAG 2.1 Success Criterion 2.1.4 (Character Key Shortcuts).
     """
     with st.expander("⌨️ Keyboard Shortcuts", expanded=False):
-        st.markdown("""
+        st.markdown(\"\"\"
         | Action | Shortcut |
         |---|---|
         | Skip to main content | `Tab` (first press) |
@@ -243,7 +243,7 @@ def render_keyboard_shortcuts() -> None:
         | Emergency SOS | `Alt+S` |
         
         *All keyboard shortcuts are non-conflicting with browser defaults.*
-        """)
+        \"\"\")
     st.divider()
     st.markdown("♿ [Accessibility Statement](pages/17_accessibility.py)")
 
