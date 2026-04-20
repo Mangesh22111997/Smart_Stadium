@@ -120,6 +120,10 @@ def build_allowed_origins() -> list[str]:
     """
     origins = [
         "http://localhost:8501",
+        "http://localhost:8502",
+        "http://localhost:8503",
+        "http://localhost:8504",
+        "http://localhost:8505",
         "http://localhost:8080",
     ]
     frontend_url = os.getenv("FRONTEND_URL", "")

@@ -225,7 +225,7 @@ def render_keyboard_shortcuts() -> None:
     Satisfies WCAG 2.1 Success Criterion 2.1.4 (Character Key Shortcuts).
     """
     with st.expander("⌨️ Keyboard Shortcuts", expanded=False):
-        st.markdown(\"\"\"
+        st.markdown("""
         | Action | Shortcut |
         |---|---|
         | Skip to main content | `Tab` (first press) |
@@ -239,7 +239,7 @@ def render_keyboard_shortcuts() -> None:
         | Emergency SOS | `Alt+S` |
         
         *All keyboard shortcuts are non-conflicting with browser defaults.*
-        \"\"\")
+        """)
     st.divider()
     st.markdown("♿ [Accessibility Statement](pages/17_accessibility.py)")
 
