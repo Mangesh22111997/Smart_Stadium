@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Events API Routes - Manage stadium events
 """
 

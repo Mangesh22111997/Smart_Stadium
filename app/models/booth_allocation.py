@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Booth Allocation models using Pydantic for validation
 """
 from pydantic import BaseModel, Field

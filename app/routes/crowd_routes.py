@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Crowd Routes - API endpoints for crowd monitoring
 """
 from fastapi import APIRouter, HTTPException, status

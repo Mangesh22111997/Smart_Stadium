@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 API Client — communicates with the FastAPI backend.
 Reads API_BASE_URL from environment so it works both locally and on Cloud Run.
 """

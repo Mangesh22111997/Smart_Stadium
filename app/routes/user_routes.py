@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 User Routes - API endpoints for user management
 """
 from fastapi import APIRouter, HTTPException, status

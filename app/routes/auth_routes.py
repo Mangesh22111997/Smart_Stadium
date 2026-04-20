@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Authentication Routes - API endpoints for user and admin authentication
 Integrates with Firebase Realtime Database
 """

@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Security Monitoring Dashboard
 Real-time crowd and gate monitoring
 """

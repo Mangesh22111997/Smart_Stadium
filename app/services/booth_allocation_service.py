@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Booth Allocation Service - Smart booth allocation logic
 """
 from typing import Dict, List, Optional, Literal

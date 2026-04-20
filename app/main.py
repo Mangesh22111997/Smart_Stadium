@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Smart Stadium System Backend — FastAPI entry point
 Cloud Run compatible: reads PORT env var, CORS allows Cloud Run URLs
 """

@@ -1,3 +1,8 @@
+"""
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
 #!/usr/bin/env python3
 """
 Smart Stadium ML - Phase ML-7: Unified Inference Server

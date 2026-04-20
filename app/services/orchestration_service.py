@@ -1,3 +1,8 @@
+"""
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
 from typing import List, Dict, Tuple, Optional
 from uuid import UUID, uuid4
 from datetime import datetime, timedelta

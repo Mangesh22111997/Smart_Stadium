@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Ticket Service - Business logic for ticket booking with Firebase RTDB integration
 """
 import asyncio

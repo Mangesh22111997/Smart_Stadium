@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Reassignment Service - Business logic for dynamic gate reassignment
 """
 from uuid import UUID, uuid4

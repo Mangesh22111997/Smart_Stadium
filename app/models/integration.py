@@ -1,3 +1,8 @@
+"""
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
 from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional, Dict, Literal
 from uuid import UUID

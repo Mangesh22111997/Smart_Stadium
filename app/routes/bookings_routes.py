@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Bookings API Routes - Manage ticket bookings with server-side authentication
 """
 

@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Booth Allocation Routes - API endpoints for booth allocation
 """
 from fastapi import APIRouter, HTTPException, status

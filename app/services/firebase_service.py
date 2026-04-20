@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Firebase Firestore Service Layer
 Handles all database operations with async support
 Provides CRUD operations for all collections

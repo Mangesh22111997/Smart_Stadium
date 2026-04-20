@@ -1,3 +1,8 @@
+"""
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
 
 """
 Google Maps Helper - Stadium mapping utilities

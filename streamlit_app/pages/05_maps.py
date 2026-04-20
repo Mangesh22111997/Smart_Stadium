@@ -1,3 +1,8 @@
+"""
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
 import streamlit as st
 from utils.session_manager import SessionManager
 from utils.api_client import get_api_client

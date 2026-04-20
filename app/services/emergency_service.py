@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Emergency Service - Business logic for emergency handling
 """
 from uuid import UUID, uuid4

@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Crowd Service - Business logic for crowd monitoring and simulation
 """
 from datetime import datetime

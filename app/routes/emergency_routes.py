@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Emergency Routes - API endpoints for emergency handling
 """
 from fastapi import APIRouter, HTTPException, status

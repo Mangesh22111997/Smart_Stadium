@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Centralised settings — loaded from environment variables.
 On Cloud Run: set via --set-env-vars in gcloud run deploy.
 Locally: set via .env file (never committed).

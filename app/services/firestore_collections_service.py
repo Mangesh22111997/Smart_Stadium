@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Firebase Collection-Specific Service Classes
 Extends FirestoreService with domain-specific methods
 """

@@ -1,3 +1,8 @@
+"""
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
 
 import pytest
 from app.ml.inference_server import InferenceServer, get_inference_server

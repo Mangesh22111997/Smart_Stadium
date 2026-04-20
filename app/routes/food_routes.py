@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Food Routes - API endpoints for food ordering with server-side authentication
 """
 from fastapi import APIRouter, HTTPException, status, Depends

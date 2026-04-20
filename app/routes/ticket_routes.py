@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Ticket Routes - API endpoints for ticket booking
 """
 from fastapi import APIRouter, HTTPException, status

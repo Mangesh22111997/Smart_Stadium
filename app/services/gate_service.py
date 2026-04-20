@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Gate Service - Business logic for gate assignment
 ML-Enhanced with predictive gate load forecasting
 """

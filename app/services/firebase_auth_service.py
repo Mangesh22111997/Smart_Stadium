@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 Firebase Authentication Service
 Handles user registration, login, and authentication with Firebase Realtime Database
 """

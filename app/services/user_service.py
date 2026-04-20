@@ -1,4 +1,9 @@
 """
+Author: Mangesh Wagh
+Email: mangeshwagh2722@gmail.com
+"""
+
+"""
 User Service - Business logic for user management
 """
 from uuid import UUID, uuid4
