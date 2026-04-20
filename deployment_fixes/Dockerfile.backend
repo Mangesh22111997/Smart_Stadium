@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copy and install backend-only dependencies first (layer cache)
 COPY requirements.backend.txt .
-RUN pip install --no-cache-dir "setuptools<70.0.0" \
+RUN pip install --no-cache-dir setuptools \
  && pip install --no-cache-dir -r requirements.backend.txt
 
 # Copy project source

@@ -1,0 +1,16 @@
+# Cloud Build config for BACKEND image
+# Usage: gcloud builds submit --config cloudbuild.backend.yaml .
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -f
+      - Dockerfile.backend
+      - -t
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/stadium-backend:latest'
+      - .
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/stadium-backend:latest'
+substitutions:
+  _REGION: asia-south1
+  _REPO: stadium-repo

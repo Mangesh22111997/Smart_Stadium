@@ -1,58 +1,57 @@
 @echo off
-REM Smart Stadium System - Automated Startup Script (Windows)
-REM Starts both backend and frontend services
+setlocal enabledelayedexpansion
 
 echo.
-echo ╔════════════════════════════════════════════════════════════════╗
-echo ║       Smart Stadium System - Automated Startup                 ║
-echo ║       Backend + Frontend Services                              ║
-echo ╚════════════════════════════════════════════════════════════════╝
+echo ==========================================
+echo      Smart Stadium System — Local Dev Startup
+echo ==========================================
 echo.
 
-REM Set colors
-for /F %%A in ('echo prompt $H ^| cmd') do set "BS=%%A"
+cd /d "%~dp0"
 
-REM Get project directory
-set PROJECT_DIR=%~dp0
-cd /d "%PROJECT_DIR%"
-
-echo [1/3] Checking Python environment...
+REM —— Virtual environment ——
 if exist ".venv\Scripts\activate.bat" (
-    echo ✓ Virtual environment found
+    echo [OK] Virtual environment found
     call .venv\Scripts\activate.bat
 ) else (
-    echo ✗ Virtual environment not found
-    echo Creating virtual environment...
+    echo [..] Creating virtual environment...
     python -m venv .venv
     call .venv\Scripts\activate.bat
-    pip install --upgrade pip
-    pip install -r requirements.txt 2>nul
 )
 
-echo.
-echo [2/3] Starting Backend Server (Port 8000)...
-echo Starting: python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
-start /B cmd /c "python -m uvicorn app.main:app --host 127.0.0.1 --port 8000"
+REM —— Install dependencies ——
+pip install -q --upgrade pip
+pip install -q -r requirements.backend.txt
+pip install -q -r requirements.frontend.txt
 
-REM Wait for backend to start
-echo ⏳ Waiting for backend to initialize (5 seconds)...
-timeout /t 5 /nobreak
+REM —— Check .env ——
+if not exist ".env" (
+    echo [ERROR] .env file not found. Copy .env.example and fill in your values.
+    pause
+    exit /b 1
+)
+echo [OK] .env file found
+
+REM —— Start backend ——
+echo.
+echo [2/3] Starting Backend on http://localhost:8000 ...
+start "Stadium Backend" cmd /k "python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload"
+
+timeout /t 5 /nobreak > nul
+echo [OK] Backend window opened
+
+REM —— Start frontend ——
+echo.
+echo [3/3] Starting Frontend on http://localhost:8501 ...
+set API_BASE_URL=http://localhost:8000
+start "Stadium Frontend" cmd /k "streamlit run streamlit_app/app.py --server.port 8501 --server.address 127.0.0.1"
 
 echo.
-echo [3/3] Starting Frontend (Streamlit on Port 8501)...
-echo Starting: streamlit run frontend.py
-start cmd /c "streamlit run frontend.py"
-
+echo ------------------------------------------
+echo   Backend  : http://localhost:8000
+echo   API Docs : http://localhost:8000/docs
+echo   Frontend : http://localhost:8501
+echo ------------------------------------------
 echo.
-echo ╔════════════════════════════════════════════════════════════════╗
-echo ║                 Services Starting...                           ║
-echo ║                                                                ║
-echo ║  Backend:  http://127.0.0.1:8000                             ║
-echo ║  Frontend: http://127.0.0.1:8501                             ║
-echo ║                                                                ║
-echo ║  Press Ctrl+C to stop services                               ║
-echo ╚════════════════════════════════════════════════════════════════╝
-echo.
-
-REM Keep this window open
+echo Both services started in separate windows.
 pause

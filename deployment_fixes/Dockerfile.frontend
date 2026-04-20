@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Use frontend-specific requirements (not the backend root one)
 COPY requirements.frontend.txt .
-RUN pip install --no-cache-dir "setuptools<70.0.0" \
+RUN pip install --no-cache-dir setuptools \
  && pip install --no-cache-dir -r requirements.frontend.txt
 
 # Copy only what the frontend needs

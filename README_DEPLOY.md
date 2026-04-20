@@ -1,36 +1,47 @@
+# 🚀 Smart Stadium — Google Cloud Run Deployment
 
-# 🚀 Smart Stadium - Cloud Run Deployment Guide
+Professional serverless deployment guide for the Hack2Skill Smart Stadium System.
 
-This guide explains how to deploy your Smart Stadium system to Google Cloud Run using the provided scripts.
+## 📋 One-Time Infrastructure Setup
+1. **Login & Project Set**:
+   ```powershell
+   gcloud auth login
+   gcloud config set project smart-stadium-system-db
+   ```
+2. **Enable Required APIs**:
+   ```powershell
+   gcloud services enable run.googleapis.com \
+                          artifactregistry.googleapis.com \
+                          cloudbuild.googleapis.com
+   ```
+3. **Create Artifact Repository**:
+   ```powershell
+   gcloud artifacts repositories create stadium-repo \
+       --repository-format=docker \
+       --location=asia-south1 \
+       --description="Smart Stadium Docker Repository"
+   ```
 
-## 1. Prerequisites
-Ensure you have the following installed and configured:
-*   [Google Cloud SDK (gcloud)](https://cloud.google.com/sdk/docs/install)
-*   Initialized gcloud: `gcloud init`
-*   Enabled APIs: `Cloud Run`, `Artifact Registry`, `Cloud Build`
+## 🚢 Quick Deploy
+The system uses a 4-step automated deployment process (Backend Build → Backend Deploy → Frontend Build → Frontend Deploy).
 
-## 2. One-Time Setup
-Create the repository in Artifact Registry:
-```powershell
-gcloud artifacts repositories create stadium-repo --repository-format=docker --location=asia-south1
-```
-
-## 3. Deploying
-Simply run the deployment script in PowerShell:
+Run the fixed PowerShell script:
 ```powershell
 .\deploy.ps1
 ```
 
-## 4. Secret Management
-The script currently passes some environment variables via CLI. For the most secure production setup, you should:
-1.  Go to the **Cloud Run Console**.
-2.  Select your service.
-3.  Go to **Edit & Deploy New Revision**.
-4.  Add your `GOOGLE_APPLICATION_CREDENTIALS` as a **Secret** using **Secret Manager**.
+## 🛠️ Architecture Overview
+* **Backend**: FastAPI running on Python 3.12 (2Gi RAM, 1 vCPU).
+* **Frontend**: Streamlit Dashboard (1Gi RAM, 1 vCPU).
+* **Communication**: Frontend calls Backend via `API_BASE_URL` env var.
+* **Security**: Backend CORS is restricted to the specific Frontend Cloud Run URL.
 
-## 5. Cleaning Up
-If you want to stop the services to save on potential (though unlikely) costs:
-```powershell
-gcloud run services delete stadium-backend --region=asia-south1
-gcloud run services delete stadium-frontend --region=asia-south1
-```
+## 🧪 Local Development
+To run both services locally for testing:
+* **Windows**: Run `.\startup.bat`
+* **Linux/Mac**: Run `./startup.sh`
+
+Both scripts will automatically:
+1. Create/activate a virtual environment.
+2. Install dependencies from both backend and frontend requirement files.
+3. Launch the Backend (8000) and Frontend (8501) in separate processes.

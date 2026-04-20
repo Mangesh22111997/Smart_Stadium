@@ -1,6 +1,22 @@
 
 import streamlit as st
+import traceback
+from contextlib import contextmanager
 from utils.asset_loader import get_background_base64
+
+@contextmanager
+def handle_ui_exceptions():
+    """
+    Context manager to wrap page logic. Catches any unexpected UI exceptions
+    and renders a polite, user-friendly error message instead of an ugly traceback.
+    """
+    try:
+        yield
+    except Exception as e:
+        st.error("⚠️ An unexpected system error occurred while loading this page.")
+        st.info("Our team has been notified. Please refresh the page or try again later.")
+        print(f"UI Exception Caught: {e}")
+        traceback.print_exc()
 
 def add_background_image():
     """
@@ -13,7 +29,7 @@ def add_background_image():
         bg_style = f"""
         <style>
         [data-testid="stAppViewContainer"] {{
-            background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url("data:image/png;base64,{img_base64}");
+            background-image: linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), url("data:image/png;base64,{img_base64}");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -39,8 +55,8 @@ def add_background_image():
             border: 1px solid rgba(255, 255, 255, 0.3);
         }}
         
-        /* Accessible typography */
-        h1, h2, h3, h4, p, span, label {{
+        /* Accessible typography for headings */
+        h1, h2, h3, h4 {{
             color: #1a1a1a !important;
             text-shadow: none !important;
         }}

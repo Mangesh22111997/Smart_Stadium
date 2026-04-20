@@ -1,0 +1,54 @@
+# ── Python cache ───────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+.pytest_cache/
+
+# ── Virtual environments ───────────────────────────────────
+.venv/
+venv/
+ENV/
+env/
+
+# ── Secrets — NEVER in image ──────────────────────────────
+.env
+.env.*
+firebase-key.json
+google-logging-credentials.json
+service-account*.json
+
+# ── Git ────────────────────────────────────────────────────
+.git/
+.gitignore
+.github/
+
+# ── Dev/docs — not needed at runtime ─────────────────────
+tests/
+scratch/
+docs/
+deprecated/
+steps/
+data/generators/
+data/generated/
+
+# ── Markdown docs ─────────────────────────────────────────
+README.md
+README_DEPLOY.md
+STADIUM_SYSTEM_GUIDE.md
+code_audit_report.md
+hackathon_standards_guide.md
+plan.md
+
+# ── Local startup scripts (not for Cloud Run) ─────────────
+startup.bat
+startup.sh
+run_streamlit.bat
+
+# ── IDE ───────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store

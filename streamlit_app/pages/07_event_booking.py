@@ -67,7 +67,7 @@ with col1:
                 st.switch_page("pages/06_food.py")
         else:
             st.info("💡 You can pre-order food and have it ready when you arrive!")
-            if st.button("🍔 Browse Food Menu", use_container_width=True):
+            if st.button("🍔 Browse Food Menu", key="browse_food_info", use_container_width=True):
                 st.session_state.in_booking_flow = True
                 st.switch_page("pages/06_food.py")
 
@@ -128,7 +128,7 @@ with col2:
                 st.switch_page("pages/06_food.py")
         else:
             st.info("💡 You can pre-order food and have it ready when you arrive!")
-            if st.button("🍔 Browse Food Menu", use_container_width=True):
+            if st.button("🍔 Browse Food Menu", key="browse_food_action", use_container_width=True):
                 st.session_state.in_booking_flow = True
                 st.switch_page("pages/06_food.py")
 
@@ -149,7 +149,7 @@ with col2:
                             "total_price": st.session_state.cart_total,
                             "status": "confirmed"
                         }
-                        food_resp = api_client.place_food_order(food_order_data)
+                        food_resp = api_client.place_food_order(food_order_data, SessionManager.get_session_token())
                         if isinstance(food_resp, dict) and "error" not in food_resp:
                             final_food_order_id = food_resp.get("order_id") or food_resp.get("id")
                             if final_food_order_id:
@@ -171,7 +171,7 @@ with col2:
                         "food_order_id": final_food_order_id
                     }
                     
-                    response = api_client.create_booking(booking_data, user_id, token)
+                    response = api_client.create_booking(booking_data, token)
                     
                     if "error" in response:
                         st.error(f"❌ Booking failed: {response.get('error')}")

@@ -1,0 +1,19 @@
+# ============================================================
+# Smart Stadium — Backend dependencies ONLY
+# Used by Dockerfile.backend
+# ============================================================
+fastapi==0.110.0
+uvicorn[standard]==0.27.1
+pyrebase4==4.7.1
+pydantic[email]==2.6.3
+python-dotenv==1.0.1
+slowapi==0.1.9
+firebase-admin==6.5.0
+google-cloud-logging==3.9.0
+requests==2.31.0
+pandas==2.2.1
+joblib==1.3.2
+numpy==1.26.4
+scikit-learn==1.4.1
+xgboost==2.0.3
+setuptools
