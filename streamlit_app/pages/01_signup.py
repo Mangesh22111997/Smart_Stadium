@@ -64,11 +64,6 @@ with st.form("signup_form"):
             key="phone"
         )
     
-    date_of_birth = st.date_input(
-        "Date of Birth",
-        key="dob"
-    )
-    
     st.markdown("## Account Credentials")
     
     username = st.text_input(
@@ -111,10 +106,10 @@ with st.form("signup_form"):
     
     address = st.text_area("Address", placeholder="Enter your full address", key="address")
     
-    # Date of Birth with extended year range
+    # Date of Birth with extended year range (from 1947 as requested)
     from datetime import date
     dob_val = st.date_input(
-        "Date of Birth",
+        "Date of Birth *",
         value=date(2000, 1, 1),
         min_value=date(1947, 1, 1),
         max_value=date.today(),
@@ -129,16 +124,10 @@ with st.form("signup_form"):
         key="hobbies"
     )
     
-    # Terms and conditions with link
-    col1, col2 = st.columns([0.7, 0.3])
-    with col1:
-        st.markdown("I agree to the [Terms & Conditions](./0_Terms_and_Conditions) and Privacy Policy")
-    with col2:
-        if st.button("📜 View Terms", key="view_terms"):
-            st.switch_page("pages/0_Terms_and_Conditions.py")
+    st.markdown("I agree to the [Terms & Conditions](./0_Terms_and_Conditions) and Privacy Policy")
     
     agree_terms = st.checkbox(
-        "I confirm my agreement to the above terms",
+        "I confirm my agreement to the Terms and Conditions *",
         key="agree_terms"
     )
     
