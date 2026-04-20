@@ -19,67 +19,67 @@ from app.models.food import (
 MENU_ITEMS = [
     # Snacks
     MenuItem(
-        item_id="pizza_001",
-        name="Margherita Pizza",
-        price=150.0,
+        item_id="paneer_tikka_001",
+        name="Paneer Tikka Roll",
+        price=180.0,
         category="snacks",
-        preparation_time=12
+        preparation_time=10
     ),
     MenuItem(
-        item_id="burger_001",
-        name="Classic Burger",
-        price=120.0,
-        category="snacks",
-        preparation_time=8
-    ),
-    MenuItem(
-        item_id="fries_001",
-        name="French Fries",
-        price=80.0,
+        item_id="vada_pav_001",
+        name="Classic Vada Pav (2 pcs)",
+        price=60.0,
         category="snacks",
         preparation_time=5
     ),
     MenuItem(
-        item_id="nachos_001",
-        name="Cheesy Nachos",
-        price=100.0,
+        item_id="samosa_001",
+        name="Punjabi Samosa (2 pcs)",
+        price=50.0,
         category="snacks",
         preparation_time=6
     ),
+    MenuItem(
+        item_id="pav_bhaji_001",
+        name="Butter Pav Bhaji",
+        price=150.0,
+        category="snacks",
+        preparation_time=8
+    ),
     # Beverages
     MenuItem(
-        item_id="coke_001",
-        name="Coca Cola",
-        price=50.0,
-        category="beverages",
-        preparation_time=2
-    ),
-    MenuItem(
-        item_id="juice_001",
-        name="Fresh Orange Juice",
-        price=80.0,
+        item_id="chai_001",
+        name="Masala Cutting Chai",
+        price=30.0,
         category="beverages",
         preparation_time=3
     ),
     MenuItem(
-        item_id="water_001",
-        name="Bottled Water",
-        price=30.0,
+        item_id="lassi_001",
+        name="Sweet Punjabi Lassi",
+        price=80.0,
         category="beverages",
-        preparation_time=1
+        preparation_time=5
+    ),
+    MenuItem(
+        item_id="nimbu_pani_001",
+        name="Fresh Nimbu Pani",
+        price=40.0,
+        category="beverages",
+        preparation_time=2
     ),
     # Main Dishes
     MenuItem(
         item_id="biryani_001",
-        name="Chicken Biryani",
-        price=250.0,
+        name="Hyderabadi Chicken Biryani",
+        price=280.0,
         category="main",
         preparation_time=15
     ),
     MenuItem(
-        item_id="paneer_001",
-        name="Paneer Butter Masala",
-        price=200.0,
+        item_id="paneer_butter_001",
+        name="Paneer Butter Masala with Butter Naan",
+        price=240.0,
         category="main",
         preparation_time=12
     ),

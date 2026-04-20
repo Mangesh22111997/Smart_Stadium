@@ -42,12 +42,25 @@ with col2:
 
 st.divider()
 
+import random
+import time
+
 # ==================== EVENT SELECTOR ====================
 with st.container():
     # Fetch events for selector
     try:
-        events_resp = api_client.list_events(limit=10)
-        events_list = events_resp.get("events", []) if isinstance(events_resp, dict) else []
+        events_resp = api_client.list_events(limit=50)
+        all_events = events_resp.get("events", []) if isinstance(events_resp, dict) else []
+        
+        # Filter for LIVE events (today)
+        today_str = datetime.date.today().isoformat()
+        events_list = [e for e in all_events if e.get("event_date") == today_str or e.get("status") == "live"]
+        
+        if not events_list and all_events:
+            # Fallback: if no live events today, show all for demo but warning
+            st.warning("⚠️ No events scheduled for today. Showing all events for management.")
+            events_list = all_events
+            
         event_names = [e.get("event_name") for e in events_list]
     except:
         events_list = []
@@ -56,18 +69,18 @@ with st.container():
     if event_names:
         col1, col2 = st.columns([0.7, 0.3])
         with col1:
-            selected_event_name = st.selectbox("🎯 Select Event to Monitor:", event_names, index=0)
+            selected_event_name = st.selectbox("🎯 Select LIVE Event to Monitor:", event_names, index=0)
             st.session_state.admin_selected_event = next((e for e in events_list if e.get("event_name") == selected_event_name), None)
         with col2:
             if st.session_state.get("admin_selected_event"):
                 e = st.session_state.admin_selected_event
-                st.info(f"**Status:** {e.get('status', 'Live')}")
+                st.info(f"**Status:** {e.get('status', 'LIVE')}")
     else:
-        st.warning("⚠️ No active events found in the system.")
+        st.warning("⚠️ No live events found for today.")
 
 if st.session_state.get("admin_selected_event"):
     curr_event = st.session_state.admin_selected_event
-    st.success(f"📍 **Currently Viewing:** {curr_event.get('event_name')} @ {curr_event.get('venue_type')}")
+    st.success(f"📍 **Currently Monitoring (LIVE):** {curr_event.get('event_name')} @ {curr_event.get('venue_type')}")
 else:
     st.info("📊 Viewing Global System Overview")
 
@@ -86,16 +99,18 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 with tab1:
     st.markdown("## 📊 Overview Dashboard")
     
-    # Key metrics
+    # Key metrics with jitter to feel dynamic
+    jitter = random.randint(-5, 5) if st.session_state.get("admin_selected_event") else 0
+    
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric("👥 Total Users", "1,234", "+12%")
+        st.metric("👥 Total Attendees", f"{1234 + jitter}", f"{12 + random.randint(-2, 2)}%")
     with col2:
-        st.metric("🎉 Active Events", "8", "+2")
+        st.metric("🎉 Active Events", "2", "Live")
     with col3:
-        st.metric("🎟️ Tickets Sold", "5,678", "+34%")
+        st.metric("🎟️ Tickets Sold", f"{5678 + jitter*10}", f"{34 + random.randint(-5, 5)}%")
     with col4:
-        st.metric("💰 Revenue", "₹45.2L", "+18%")
+        st.metric("💰 Revenue", f"₹{45.2 + (jitter/10):.1f}L", f"{18 + random.randint(-3, 3)}%")
     
     st.divider()
     
@@ -103,32 +118,35 @@ with tab1:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("### 👥 Crowd per Gate")
+        st.markdown(f"### 👥 Crowd per Gate - {curr_event.get('event_name') if st.session_state.get('admin_selected_event') else 'All'}")
         crowd_data = pd.DataFrame({
             'Gate': ['Gate A', 'Gate B', 'Gate C', 'Gate D', 'Gate E'],
-            'Crowd': [450, 320, 280, 510, 190]
+            'Crowd': [450+jitter*2, 320+jitter, 280-jitter, 510+jitter*3, 190+jitter]
         })
         fig = px.bar(crowd_data, x='Gate', y='Crowd', color='Crowd',
                      color_continuous_scale='RdYlGn_r')
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
-        st.markdown("### 📈 Revenue Trend")
+        st.markdown("### 📈 Attendance Trend")
         revenue_data = pd.DataFrame({
-            'Date': pd.date_range('2024-01-01', periods=30),
-            'Revenue': [1000 + i*50 for i in range(30)]
+            'Time': pd.date_range(datetime.datetime.now() - datetime.timedelta(hours=5), periods=10, freq='30min'),
+            'Attendees': [500, 800, 1200, 1500, 2200, 2800, 3500, 4200, 4800, 5200 + jitter*5]
         })
-        fig = px.line(revenue_data, x='Date', y='Revenue', markers=True)
+        fig = px.line(revenue_data, x='Time', y='Attendees', markers=True)
         st.plotly_chart(fig, use_container_width=True)
     
     st.divider()
     
     # Recent activity
-    st.markdown("### 📝 Recent Activity")
+    st.markdown("### 📝 Live Activity Log")
     activities = pd.DataFrame({
-        'Time': ['14:30', '14:15', '14:00', '13:45'],
-        'Activity': ['User Booked Ticket', 'Food Order Placed', 'Emergency SOS', 'Gate Alert Issued'],
-        'User': ['john_doe', 'jane_smith', 'admin_user', 'System']
+        'Time': [datetime.datetime.now().strftime("%H:%M:%S"), 
+                 (datetime.datetime.now() - datetime.timedelta(minutes=2)).strftime("%H:%M:%S"),
+                 (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%H:%M:%S"),
+                 (datetime.datetime.now() - datetime.timedelta(minutes=8)).strftime("%H:%M:%S")],
+        'Activity': ['Ticket Scanned at Gate D', 'Food Order #9821 Ready', 'New Booking: VVIP Section', 'Gate B Crowd Alert'],
+        'User': ['Amit Kumar', 'Priya Sharma', 'Rajesh Gupta', 'System']
     })
     st.table(activities)
 

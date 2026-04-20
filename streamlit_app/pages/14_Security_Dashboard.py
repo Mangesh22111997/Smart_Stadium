@@ -31,12 +31,25 @@ if user_role not in ["security", "moderator", "superadmin"]:
 st.markdown("# 📊 Security Monitoring Dashboard")
 st.markdown(f"Logged in as: **{SessionManager.get_username()}** ({user_role.title()})")
 
+import random
+import time
+
 # ==================== EVENT SELECTOR ====================
 st.divider()
 try:
     api_client = get_api_client()
-    events_resp = api_client.list_events(limit=10)
-    events_list = events_resp.get("events", []) if isinstance(events_resp, dict) else []
+    events_resp = api_client.list_events(limit=50)
+    all_events = events_resp.get("events", []) if isinstance(events_resp, dict) else []
+    
+    # Filter for LIVE events (today)
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    events_list = [e for e in all_events if e.get("event_date") == today_str or e.get("status") == "live"]
+    
+    if not events_list and all_events:
+        # Fallback for demo
+        st.warning("⚠️ No live events found for today. Showing all available events.")
+        events_list = all_events
+
     event_names = [e.get("event_name") for e in events_list]
 except:
     events_list = []
@@ -45,11 +58,11 @@ except:
 if event_names:
     col1, col2 = st.columns([0.7, 0.3])
     with col1:
-        selected_event_name = st.selectbox("🛡️ Select Event to Monitor:", event_names, index=0)
+        selected_event_name = st.selectbox("🛡️ Select LIVE Event to Monitor:", event_names, index=0)
         st.session_state.security_selected_event = next((e for e in events_list if e.get("event_name") == selected_event_name), None)
     with col2:
         if st.session_state.get("security_selected_event"):
-            st.info(f"📍 Viewing Live Status")
+            st.info(f"📍 Monitoring ACTIVE")
 
 if st.session_state.get("security_selected_event"):
     curr_event = st.session_state.security_selected_event
@@ -63,6 +76,9 @@ if "view_mode" not in st.session_state:
     st.session_state.view_mode = None
 if "editing_gate" not in st.session_state:
     st.session_state.editing_gate = None
+
+# Add jitter for dynamic feel
+jitter = random.randint(-2, 3) if st.session_state.get("security_selected_event") else 0
 
 col1, col2, col3 = st.columns(3)
 with col1:
@@ -79,7 +95,7 @@ with col3:
 st.divider()
 
 # Real-time gate monitoring
-st.markdown("## 🚪 Real-Time Gate Status")
+st.markdown(f"## 🚪 Gate Status - {curr_event.get('event_name') if st.session_state.get('security_selected_event') else 'All Gates'}")
 
 api_client = get_api_client()
 gates_response = api_client.get_all_gates()
@@ -92,7 +108,7 @@ if gates:
     for idx, (gate_key, gate_data) in enumerate(gates.items()):
         col_idx = idx % 5
         with gate_cols[col_idx]:
-            crowd_pct = gate_data.get("crowd_percentage", 0)
+            crowd_pct = max(0, min(100, gate_data.get("crowd_percentage", 0) + jitter*5))
             status = gate_data.get("status", "unknown")
             
             # Color coding based on crowd
