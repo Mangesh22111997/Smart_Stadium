@@ -1,3 +1,4 @@
+
 import streamlit as st
 from utils.asset_loader import get_background_base64
 
@@ -49,6 +50,21 @@ def add_background_image():
             outline: 3px solid #6366f1 !important;
             outline-offset: 2px;
         }}
+
+        /* WCAG 2.5.5: Minimum 48px touch target for mobile stadium use */
+        .stButton > button {{
+            min-height: 48px !important;
+            min-width: 120px !important;
+            font-size: 16px !important;   /* Prevents iOS auto-zoom on tap */
+            border-radius: 8px !important;
+        }}
+
+        /* Minimum input height for comfortable outdoor use */
+        .stTextInput > div > div > input,
+        .stSelectbox > div > div > select {{
+            min-height: 44px !important;
+            font-size: 16px !important;
+        }}
         </style>
         """
         st.markdown(bg_style, unsafe_allow_html=True)
@@ -59,6 +75,12 @@ def add_background_image():
         [data-testid="stAppViewContainer"] {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+        }
+        
+        /* Minimum touch target for fallback gradient mode too */
+        .stButton > button {
+            min-height: 48px !important;
+            min-width: 120px !important;
         }
         </style>
         """, unsafe_allow_html=True)

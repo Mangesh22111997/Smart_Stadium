@@ -14,13 +14,13 @@ st.set_page_config(page_title="Security Dashboard - Smart Stadium", page_icon="�
 # Check security access
 if not SessionManager.is_logged_in():
     st.error("❌ Unauthorized access")
-    st.switch_page("pages/13_Security_Login.py")
+    st.switch_page("pages/13_security_login.py")
     st.stop()
 
 user_role = SessionManager.get_user_role()
 if user_role not in ["security", "moderator", "superadmin"]:
     st.error("❌ Access denied. Security staff only.")
-    st.switch_page("pages/1_Login.py")
+    st.switch_page("pages/00_login.py")
     st.stop()
 
 st.markdown("# 📊 Security Monitoring Dashboard")
@@ -42,7 +42,7 @@ with col2:
 with col3:
     if st.button("🚪 Logout", use_container_width=True):
         SessionManager.logout()
-        st.switch_page("pages/1_Login.py")
+        st.switch_page("pages/00_login.py")
 
 st.divider()
 

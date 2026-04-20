@@ -12,7 +12,7 @@ st.set_page_config(page_title="Food - Smart Stadium", page_icon="🍔", layout="
 
 if not SessionManager.is_logged_in():
     st.error("❌ Please log in first")
-    st.switch_page("pages/1_Login.py")
+    st.switch_page("pages/00_login.py")
     st.stop()
 
 # Apply Background
@@ -25,7 +25,7 @@ if st.button("🚪 Logout"):
     api_client = get_api_client()
     api_client.logout(SessionManager.get_session_token())
     SessionManager.logout()
-    st.switch_page("pages/1_Login.py")
+    st.switch_page("pages/00_login.py")
 
 st.divider()
 
@@ -137,7 +137,7 @@ else:
         st.markdown("### 🛒 Confirm Your Selection")
         st.info("💡 You'll finalize payment for these items on the Booking page.")
         if st.button("✅ Confirm Selection & Return", use_container_width=True):
-            st.switch_page("pages/06_event_booking.py")
+            st.switch_page("pages/07_event_booking.py")
     else:
         st.markdown("### 🛍️ Checkout")
         
@@ -206,7 +206,7 @@ else:
                                 st.session_state.booking_food_order_id = response.get('order_id') or response.get('id')
                                 st.info("🔄 Returning to your booking...")
                                 time.sleep(2)
-                                st.switch_page("pages/06_event_booking.py")
+                                st.switch_page("pages/07_event_booking.py")
             
             with col_b:
                 if st.form_submit_button("❌ Cancel", use_container_width=True):
@@ -254,7 +254,7 @@ st.divider()
 col1, col2 = st.columns(2)
 with col1:
     if st.button("🎉 Browse Events", use_container_width=True):
-        st.switch_page("pages/02_events.py")
+        st.switch_page("pages/03_events.py")
 with col2:
     if st.button("🏠 Back to Home", use_container_width=True):
-        st.switch_page("pages/01_home.py")
+        st.switch_page("pages/02_home.py")

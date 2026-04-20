@@ -7,13 +7,14 @@ python-dotenv==1.0.1
 slowapi==0.1.9
 firebase-admin==6.5.0
 google-cloud-logging==3.9.0
-requests==2.31.0
+requests==2.28.1
 pandas==2.2.1
 joblib==1.3.2
+setuptools
 
 # Frontend Dependencies
 streamlit==1.32.0
-streamlit-option-menu==0.3.11
+streamlit-option-menu==0.3.13
 plotly==5.19.0
 
 # Testing Dependencies

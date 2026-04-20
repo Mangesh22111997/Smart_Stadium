@@ -11,7 +11,7 @@ st.set_page_config(page_title="Bookings - Smart Stadium", page_icon="🎟️", l
 # Check if logged in
 if not SessionManager.is_logged_in():
     st.error("❌ Please log in first")
-    st.switch_page("pages/1_Login.py")
+    st.switch_page("pages/00_login.py")
     st.stop()
 
 st.markdown("# 🎟️ Ticket Bookings")
@@ -21,7 +21,7 @@ if st.button("🚪 Logout"):
     api_client = get_api_client()
     api_client.logout(SessionManager.get_session_token())
     SessionManager.logout()
-    st.switch_page("pages/1_Login.py")
+    st.switch_page("pages/00_login.py")
 
 st.divider()
 
@@ -93,7 +93,7 @@ st.divider()
 col1, col2 = st.columns(2)
 with col1:
     if st.button("🎉 Browse Events", use_container_width=True):
-        st.switch_page("pages/02_events.py")
+        st.switch_page("pages/03_events.py")
 with col2:
     if st.button("🏠 Back to Home", use_container_width=True):
-        st.switch_page("pages/01_home.py")
+        st.switch_page("pages/02_home.py")

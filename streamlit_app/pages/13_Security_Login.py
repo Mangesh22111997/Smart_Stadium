@@ -10,7 +10,7 @@ st.set_page_config(page_title="Security Login - Smart Stadium", page_icon="🔐"
 
 # Redirect if already logged in
 if SessionManager.is_logged_in() and SessionManager.is_security():
-    st.switch_page("pages/14_Security_Dashboard.py")
+    st.switch_page("pages/14_security_dashboard.py")
 
 st.markdown("# 🔐 Security Staff Login")
 st.markdown("*Access the security monitoring dashboard*")
@@ -60,10 +60,10 @@ with st.form("security_login_form"):
                 st.info(f"Welcome, {response.get('name', 'Staff')}!")
                 st.balloons()
                 
-                st.switch_page("pages/14_Security_Dashboard.py")
+                st.switch_page("pages/14_security_dashboard.py")
     
     if back_button:
-        st.switch_page("pages/1_Login.py")
+        st.switch_page("pages/00_login.py")
 
 st.divider()
 st.markdown("""

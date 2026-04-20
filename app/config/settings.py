@@ -19,14 +19,17 @@ FIREBASE_MEASUREMENT_ID = os.getenv("FIREBASE_MEASUREMENT_ID")
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # Security
-SECRET_KEY = os.getenv("SECRET_KEY", "default-secret-key-for-dev")
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # App Settings
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
-PORT = int(os.getenv("PORT", 800))
+PORT = int(os.getenv("PORT", 8000))
 
 # Validation
 CRITICAL_VARS = ["FIREBASE_API_KEY", "FIREBASE_DATABASE_URL", "SECRET_KEY"]
 for var in CRITICAL_VARS:
     if not os.getenv(var):
-        print(f"⚠️ Warning: Environment variable {var} is not set.")
+        raise EnvironmentError(
+            f"❌ Required environment variable '{var}' is not set. "
+            f"Copy .env.example to .env and fill in your values."
+        )

@@ -1,7 +1,11 @@
+
 """
 Google Maps Helper - Stadium mapping utilities
 Creates interactive stadium maps with gates, parking, transit
 """
+import requests as req
+import os
+import streamlit as st
 
 class StadiumMapHelper:
     """Generate stadium maps using Google Maps Embed"""
@@ -43,7 +47,6 @@ class StadiumMapHelper:
     def get_embed_url(lat: float, lng: float, zoom: int = 15) -> str:
         """
         Generate Google Maps Embed URL.
-        Uses API Key from settings if available, otherwise falls back to free version.
         """
         try:
             from app.config.settings import GOOGLE_MAPS_API_KEY
@@ -52,9 +55,37 @@ class StadiumMapHelper:
         except Exception:
             pass
             
-        # Fallback to free version if key is missing
         return f"https://maps.google.com/maps?q={lat},{lng}&z={zoom}&output=embed"
     
+    @staticmethod
+    @st.cache_data(ttl=600, show_spinner=False)
+    def get_live_walk_time(from_lat: float, from_lng: float,
+                            to_lat: float, to_lng: float) -> str:
+        """
+        Get real walking time using Google Maps Distance Matrix API.
+        Falls back to estimate if API key is unavailable.
+        """
+        from app.config.settings import GOOGLE_MAPS_API_KEY
+        if not GOOGLE_MAPS_API_KEY:
+            return "~10 mins (estimate)"
+
+        try:
+            url = (
+                f"https://maps.googleapis.com/maps/api/distancematrix/json"
+                f"?origins={from_lat},{from_lng}"
+                f"&destinations={to_lat},{to_lng}"
+                f"&mode=walking"
+                f"&key={GOOGLE_MAPS_API_KEY}"
+            )
+            response = req.get(url, timeout=5)
+            data = response.json()
+            if data.get("status") == "OK":
+                duration_text = data["rows"][0]["elements"][0]["duration"]["text"]
+                return duration_text
+            return "~10 mins (estimate)"
+        except Exception:
+            return "~10 mins (estimate)"
+
     @staticmethod
     def get_directions_text(from_location: str, to_location: str = "Stadium") -> str:
         """Generate text directions"""

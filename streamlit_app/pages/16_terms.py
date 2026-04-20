@@ -152,6 +152,6 @@ st.divider()
 col1, col2 = st.columns(2)
 with col1:
     if st.button("← Back to Signup", use_container_width=True):
-        st.switch_page("pages/2_Signup.py")
+        st.switch_page("pages/01_signup.py")
 with col2:
     st.info("✅ By checking the box on the signup page, you agree to these Terms and Conditions")

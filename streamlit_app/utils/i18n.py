@@ -34,19 +34,28 @@ STRINGS = {
         "logout": "🚪 लॉगआउट",
         "history": "आपकी बुकिंग का इतिहास",
         "parking_enabled": "{mode} के लिए पार्किंग सक्षम है"
+    },
+    "mr": {
+        "welcome": "स्मार्ट स्टेडियममध्ये आपले स्वागत आहे",
+        "book_tickets": "तिकीट बुक करा",
+        "browse_food": "फूड मेनू पहा",
+        "my_bookings": "माझ्या बुकिंग",
+        "stadium_maps": "इंटरएक्टिव्ह नकाशे",
+        "gate_assigned": "तुमचा नियुक्त गेट **{gate}** आहे",
+        "booking_confirmed": "🎉 बुकिंग यशस्वी झाली!",
+        "order_placed": "✅ ऑर्डर यशस्वीरित्या दिला!",
+        "need_parking": "पार्किंग हवे आहे?",
+        "commute_mode": "तुम्ही कसे प्रवास कराल?",
+        "confirm_pay": "पुष्टी करा आणि पेमेंट करा",
+        "logout": "🚪 लॉगआउट",
+        "history": "तुमच्या बुकिंगचा इतिहास",
+        "parking_enabled": "{mode} साठी पार्किंग सक्षम आहे"
     }
 }
 
 def t(key: str, **kwargs) -> str:
     """
     Retrieve a localized string based on the current session language.
-    
-    Args:
-        key: The key for the localized string.
-        kwargs: Formatting arguments.
-        
-    Returns:
-        The localized and formatted string.
     """
     lang = st.session_state.get("lang", "en")
     template = STRINGS.get(lang, STRINGS["en"]).get(key, STRINGS["en"].get(key, key))
@@ -56,13 +65,25 @@ def language_selector():
     """Display a language selection widget in the sidebar."""
     with st.sidebar:
         st.divider()
+        lang_options = ["en", "hi", "mr"]
+        lang_names = {
+            "en": "English",
+            "hi": "हिन्दी (Hindi)",
+            "mr": "मराठी (Marathi)"
+        }
+        
+        current_lang = st.session_state.get("lang", "en")
+        if current_lang not in lang_options:
+            current_lang = "en"
+            
         lang = st.selectbox(
-            "🌐 Language / भाषा",
-            options=["en", "hi"],
-            format_func=lambda x: "English" if x == "en" else "हिन्दी (Hindi)",
-            index=0 if st.session_state.get("lang", "en") == "en" else 1,
+            "🌐 Language / भाषा / भाषा",
+            options=lang_options,
+            format_func=lambda x: lang_names[x],
+            index=lang_options.index(current_lang),
             key="lang_selector"
         )
+        
         if lang != st.session_state.get("lang"):
             st.session_state.lang = lang
             st.rerun()

@@ -1,8 +1,15 @@
+
 """
 Smart Stadium System Backend
 Main entry point with FastAPI
 """
 from fastapi import FastAPI, status
+from dotenv import load_dotenv
+import os
+
+# Load environment variables early
+load_dotenv()
+from fastapi.responses import JSONResponse
 from datetime import datetime
 from app.routes import (
     user_routes, ticket_routes, gate_routes, crowd_routes, reassignment_routes,
@@ -14,16 +21,39 @@ from app.config.firebase_config import initialize_firebase, get_db_connection
 import logging
 
 from fastapi.middleware.cors import CORSMiddleware
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+from app.utils.limiter import limiter
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("smart_stadium")
 
-# Initialize Limiter
-limiter = Limiter(key_func=get_remote_address)
+def setup_cloud_logging():
+    """
+    Route Python logging to Google Cloud Logging if credentials are available.
+    Falls back to local console logging gracefully.
+    """
+    try:
+        import google.cloud.logging
+        
+        # Check if credentials file exists if path is provided
+        cred_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+        if cred_path and not os.path.isabs(cred_path):
+            # Convert relative path to absolute based on project root
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            abs_path = os.path.join(base_dir, cred_path)
+            if os.path.exists(abs_path):
+                os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = abs_path
+                
+        client = google.cloud.logging.Client()
+        client.setup_logging()
+        logger.info("✅ Google Cloud Logging active — logs visible in GCP Console")
+        print("✅ Google Cloud Logging active — logs visible in GCP Console")
+    except Exception as e:
+        print(f"ℹ️  Google Cloud Logging not configured: {e} — using local console logging")
+
+# Call before app creation
+setup_cloud_logging()
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -33,6 +63,7 @@ app = FastAPI(
 )
 
 # Add Limiter to state
+from slowapi import _rate_limit_exceeded_handler
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
@@ -55,6 +86,31 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Authorization", "Content-Type"],
 )
+
+# Audit Logging Middleware
+import time
+from fastapi import Request
+
+@app.middleware("http")
+async def audit_logging_middleware(request: Request, call_next):
+    """
+    Middleware to log all requests for audit purposes in GCP Console.
+    """
+    start_time = time.time()
+    
+    # Process request
+    response = await call_next(request)
+    
+    # Calculate latency
+    process_time = (time.time() - start_time) * 1000
+    
+    # Log audit entry
+    logger.info(
+        f"AUDIT | {request.method} {request.url.path} | "
+        f"Status: {response.status_code} | Latency: {process_time:.2f}ms"
+    )
+    
+    return response
 
 # ============================================================================
 # INCLUDE ROUTERS
@@ -186,6 +242,16 @@ async def startup_event():
             logger.error(f"⚠️  Firebase connection test: {e}")
             print(f"⚠️  Firebase connection test: {e}\n")
         
+        # Pre-load ML models so first prediction is instant
+        try:
+            from app.ml.inference_server import get_inference_server
+            get_inference_server()
+            logger.info("✅ ML inference server pre-loaded")
+            print("✅ ML inference server pre-loaded")
+        except Exception as e:
+            logger.warning(f"⚠️  ML models not loaded: {e}. Rule-based fallback active.")
+            print(f"⚠️  ML models not loaded: {e}")
+            
         print("✅ All services initialized successfully\n")
         
     except Exception as e:
@@ -208,13 +274,15 @@ async def shutdown_event():
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request, exc):
-    """
-    Global exception handler
-    """
-    return {
-        "error": "Internal Server Error",
-        "detail": str(exc)
-    }
+    """Global fallback exception handler — returns JSON, never a server crash."""
+    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal Server Error",
+            "detail": "An unexpected error occurred. Please try again."
+        }
+    )
 
 
 # ============================================================================

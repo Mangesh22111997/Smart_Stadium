@@ -18,7 +18,7 @@ if st.button("🚪 Logout"):
     api_client = get_api_client()
     api_client.logout(SessionManager.get_session_token())
     SessionManager.logout()
-    st.switch_page("pages/1_Login.py")
+    st.switch_page("pages/00_login.py")
 
 st.divider()
 
@@ -43,4 +43,4 @@ else:
     st.error(f"Failed to load users: {users_response.get('detail', 'Unknown error')}")
 
 if st.button("📊 Back to Dashboard"):
-    st.switch_page("pages/9_Admin_Dashboard.py")
+    st.switch_page("pages/09_admin_dashboard.py")

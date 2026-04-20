@@ -14,12 +14,12 @@ st.set_page_config(page_title="Admin Dashboard", page_icon="📊", layout="wide"
 # Check if logged in and is admin
 if not SessionManager.is_logged_in():
     st.error("❌ Please log in first")
-    st.switch_page("pages/1_Login.py")
+    st.switch_page("pages/00_login.py")
     st.stop()
 
 if not SessionManager.is_admin():
     st.error("❌ Admin access required")
-    st.switch_page("pages/01_home.py")
+    st.switch_page("pages/02_home.py")
     st.stop()
 
 api_client = get_api_client()
@@ -33,7 +33,7 @@ with col2:
     if st.button("🚪 Logout", use_container_width=True):
         api_client.logout(SessionManager.get_session_token())
         SessionManager.logout()
-        st.switch_page("pages/1_Login.py")
+        st.switch_page("pages/00_login.py")
 
 st.divider()
 

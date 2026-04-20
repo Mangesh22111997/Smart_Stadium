@@ -18,7 +18,7 @@ if SessionManager.is_logged_in():
     st.success("✅ You're already logged in!")
     st.info(f"Logged in as: {SessionManager.get_username()}")
     if st.button("Return to Home"):
-        st.switch_page("pages/01_home.py")
+        st.switch_page("pages/02_home.py")
     st.stop()
 
 st.markdown("# 🔐 Smart Stadium Login")
@@ -72,14 +72,14 @@ with tab1:
                     st.success("✅ Login successful!")
                     st.balloons()
                     time.sleep(1)
-                    st.switch_page("pages/01_home.py")
+                    st.switch_page("pages/02_home.py")
                 else:
                     st.error(f"❌ {result.get('detail', 'Login failed')}")
     
     st.markdown("---")
     st.markdown("### New to Smart Stadium?")
     if st.button("📋 Create Account", use_container_width=True, key="cust_signup_btn"):
-        st.switch_page("pages/2_Signup.py")
+        st.switch_page("pages/01_signup.py")
     
     with st.expander("📋 Demo Credentials"):
         st.markdown("""
@@ -133,7 +133,7 @@ with tab2:
                     st.success("✅ Admin login successful!")
                     st.balloons()
                     time.sleep(1)
-                    st.switch_page("pages/9_Admin_Dashboard.py")
+                    st.switch_page("pages/09_admin_dashboard.py")
                 else:
                     st.error(f"❌ {result.get('detail', 'Login failed')}")
     
@@ -163,7 +163,7 @@ with tab3:
     st.info("🔐 Access restricted to authorized security personnel only")
     
     if st.button("🔑 Go to Security Staff Login →", use_container_width=True):
-        st.switch_page("pages/13_Security_Login.py")
+        st.switch_page("pages/13_security_login.py")
     
     st.divider()
     

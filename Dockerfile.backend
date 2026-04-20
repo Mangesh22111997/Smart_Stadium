@@ -1,0 +1,30 @@
+
+# Use an official Python runtime as a parent image
+FROM python:3.12-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV PORT 8080
+
+# Set the working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir setuptools && pip install --no-cache-dir -r requirements.txt
+
+# Copy the ENTIRE project structure
+# This ensures that 'import app.xxx' works exactly like it does on your local machine
+COPY . .
+
+# Expose the port
+EXPOSE 8080
+
+# Use shell form to ensure $PORT is expanded
+CMD exec uvicorn app.main:app --host 0.0.0.0 --port $PORT

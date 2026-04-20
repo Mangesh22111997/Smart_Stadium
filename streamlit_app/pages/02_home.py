@@ -18,7 +18,7 @@ language_selector()
 if not SessionManager.is_logged_in():
     st.error("❌ Please log in first")
     if st.button("🔐 Go to Login"):
-        st.switch_page("pages/1_Login.py")
+        st.switch_page("pages/00_login.py")
     st.stop()
 
 # Apply Background
@@ -80,7 +80,7 @@ if st.session_state.show_profile_menu:
         col1, col2 = st.columns(2)
         with col1:
             if st.button("📋 My Bookings", use_container_width=True, key="menu_bookings"):
-                st.switch_page("pages/03_bookings.py")
+                st.switch_page("pages/04_bookings.py")
         with col2:
             if st.button("⚙️ Settings", use_container_width=True, key="menu_settings"):
                 st.info("Settings page coming soon!")
@@ -94,7 +94,7 @@ if st.session_state.show_profile_menu:
                 api_client.logout(SessionManager.get_session_token())
                 SessionManager.logout()
                 st.success("✅ Logged out successfully!")
-                st.switch_page("pages/1_Login.py")
+                st.switch_page("pages/00_login.py")
 
 # Notifications Section
 if st.session_state.show_notifications:
@@ -124,7 +124,7 @@ with col1:
     </div>
     """, unsafe_allow_html=True)
     if st.button("Browse →", use_container_width=True, key="discover_btn"):
-        st.switch_page("pages/02_events.py")
+        st.switch_page("pages/03_events.py")
 
 with col2:
     st.markdown("""
@@ -134,7 +134,7 @@ with col2:
     </div>
     """, unsafe_allow_html=True)
     if st.button("View Maps →", use_container_width=True, key="maps_btn"):
-        st.switch_page("pages/04_maps.py")
+        st.switch_page("pages/05_maps.py")
 
 with col3:
     st.markdown("""
@@ -144,7 +144,7 @@ with col3:
     </div>
     """, unsafe_allow_html=True)
     if st.button("Order Now →", use_container_width=True, key="food_btn"):
-        st.switch_page("pages/05_food.py")
+        st.switch_page("pages/06_food.py")
 
 st.divider()
 
@@ -201,7 +201,7 @@ try:
                     if st.button("🎟️ Book Now", key=f"home_book_{event.get('event_id', 'e')}_{idx}", use_container_width=True):
                         # Redirect to dedicated booking page
                         st.session_state["selected_event"] = event
-                        st.switch_page("pages/06_event_booking.py")
+                        st.switch_page("pages/07_event_booking.py")
                 
                 st.divider()
 except Exception as e:

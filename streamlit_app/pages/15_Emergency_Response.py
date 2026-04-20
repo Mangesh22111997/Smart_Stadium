@@ -13,12 +13,12 @@ st.set_page_config(page_title="Emergency Response - Smart Stadium", page_icon="�
 # Check security access
 if not SessionManager.is_logged_in():
     st.error("❌ Unauthorized")
-    st.switch_page("pages/13_Security_Login.py")
+    st.switch_page("pages/13_security_login.py")
     st.stop()
 
 if SessionManager.get_user_role() not in ["security", "moderator", "superadmin"]:
     st.error("❌ Access denied")
-    st.switch_page("pages/1_Login.py")
+    st.switch_page("pages/00_login.py")
     st.stop()
 
 st.markdown("# 🚨 Emergency Response Center")
@@ -28,7 +28,7 @@ st.markdown("Coordinate emergency response and crowd management")
 col1, col2, col3, col4 = st.columns(4)
 with col1:
     if st.button("← Back to Dashboard"):
-        st.switch_page("pages/14_Security_Dashboard.py")
+        st.switch_page("pages/14_security_dashboard.py")
 with col2:
     if st.button("📞 Emergency Contacts"):
         st.session_state.show_contacts = st.session_state.get("show_contacts", False)
@@ -48,7 +48,7 @@ with col3:
 with col4:
     if st.button("🚪 Logout"):
         SessionManager.logout()
-        st.switch_page("pages/1_Login.py")
+        st.switch_page("pages/00_login.py")
 
 st.divider()
 

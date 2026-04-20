@@ -17,7 +17,7 @@ add_background_image()
 # Check if already logged in
 if SessionManager.is_logged_in():
     st.success("✅ You're already logged in!")
-    st.switch_page("pages/01_home.py")
+    st.switch_page("pages/02_home.py")
     st.stop()
 
 st.markdown("# 📋 Create Your Account")
@@ -215,11 +215,11 @@ with st.form("signup_form"):
                 st.session_state["new_user_id"] = result.get("user_id")
                 
                 time.sleep(2)
-                st.switch_page("pages/1_Login.py")
+                st.switch_page("pages/00_login.py")
             else:
                 st.error(f"❌ Signup failed: {result.get('detail', 'Unknown error')}")
 
 st.divider()
 st.markdown("### Already have an account?")
 if st.button("🔐 Login Here", use_container_width=True):
-    st.switch_page("pages/1_Login.py")
+    st.switch_page("pages/00_login.py")

@@ -13,7 +13,7 @@ st.set_page_config(page_title="Events - Smart Stadium", page_icon="🎉", layout
 if not SessionManager.is_logged_in():
     st.error("❌ Please log in first")
     if st.button("🔐 Go to Login"):
-        st.switch_page("pages/1_Login.py")
+        st.switch_page("pages/00_login.py")
     st.stop()
 
 # Apply Background
@@ -48,7 +48,7 @@ with col1:
     st.markdown("*Explore upcoming events at Smart Stadium*")
 with col3:
     if st.button("🏠 Home", use_container_width=True):
-        st.switch_page("pages/01_home.py")
+        st.switch_page("pages/02_home.py")
 
 st.divider()
 
@@ -163,7 +163,7 @@ else:
             if event.get('available_seats', 0) > 0:
                 if st.button("🎟️ Book Now", use_container_width=True, key=f"book_{event.get('event_id', '')}"):
                     st.session_state["selected_event"] = event
-                    st.switch_page("pages/06_event_booking.py")
+                    st.switch_page("pages/07_event_booking.py")
             else:
                 st.error("❌ Sold Out!")
         

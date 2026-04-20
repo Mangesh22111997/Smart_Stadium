@@ -80,7 +80,7 @@ The project follows a modular architecture that separates business logic, data m
 ## 5. Google Services Integrated
 *   **Firebase Realtime Database**: Acts as the "Live Heart" of the system, syncing crowd counts, food orders, and emergency alerts across all users instantly.
 *   **Firebase Authentication**: Provides secure, industry-standard user management.
-*   **Google Cloud Logging**: (Integrated) Captures backend logs for production observability and audit trails.
+*   **Google Cloud Logging**: (Integrated) Captures backend logs for production observability. Includes a custom **Audit Logging Middleware** that tracks method, path, status, and latency for every API request in the GCP Console.
 
 ---
 

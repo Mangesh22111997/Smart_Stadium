@@ -10,7 +10,7 @@ st.set_page_config(page_title="Notifications - Smart Stadium", page_icon="🔔",
 
 if not SessionManager.is_logged_in():
     st.error("❌ Please log in first")
-    st.switch_page("pages/1_Login.py")
+    st.switch_page("pages/00_login.py")
     st.stop()
 
 st.markdown("# 🔔 Notifications")
@@ -19,7 +19,7 @@ if st.button("🚪 Logout"):
     api_client = get_api_client()
     api_client.logout(SessionManager.get_session_token())
     SessionManager.logout()
-    st.switch_page("pages/1_Login.py")
+    st.switch_page("pages/00_login.py")
 
 st.divider()
 
@@ -33,4 +33,4 @@ st.markdown("### Notification History")
 st.write("No more notifications")
 
 if st.button("🏠 Back to Home"):
-    st.switch_page("pages/01_home.py")
+    st.switch_page("pages/02_home.py")

@@ -11,7 +11,7 @@ st.set_page_config(page_title="Book Event - Smart Stadium", page_icon="🎟️",
 # Check if logged in
 if not SessionManager.is_logged_in():
     st.error("❌ Please log in first")
-    st.switch_page("pages/1_Login.py")
+    st.switch_page("pages/00_login.py")
     st.stop()
 
 # Apply Background
@@ -27,7 +27,7 @@ api_client = get_api_client()
 if "selected_event" not in st.session_state or st.session_state.selected_event is None:
     st.warning("⚠️ No event selected. Please select an event from the Home or Events page.")
     if st.button("🏠 Go to Home"):
-        st.switch_page("pages/01_home.py")
+        st.switch_page("pages/02_home.py")
     st.stop()
 
 event = st.session_state.selected_event
@@ -64,12 +64,12 @@ with col1:
             st.success(f"✅ Food order linked: **{st.session_state.booking_food_order_id}**")
             if st.button("🔄 Change Food Order"):
                 st.session_state.in_booking_flow = True
-                st.switch_page("pages/05_food.py")
+                st.switch_page("pages/06_food.py")
         else:
             st.info("💡 You can pre-order food and have it ready when you arrive!")
             if st.button("🍔 Browse Food Menu", use_container_width=True):
                 st.session_state.in_booking_flow = True
-                st.switch_page("pages/05_food.py")
+                st.switch_page("pages/06_food.py")
 
 with col2:
     with st.container():
@@ -79,7 +79,7 @@ with col2:
         if available_seats <= 0:
             st.error("❌ Sold Out!")
             if st.button("🏠 Back to Home", use_container_width=True):
-                st.switch_page("pages/01_home.py")
+                st.switch_page("pages/02_home.py")
             st.stop()
             
         with st.container(border=True):
@@ -125,12 +125,12 @@ with col2:
             
             if st.button("🔄 Change Food Order"):
                 st.session_state.in_booking_flow = True
-                st.switch_page("pages/05_food.py")
+                st.switch_page("pages/06_food.py")
         else:
             st.info("💡 You can pre-order food and have it ready when you arrive!")
             if st.button("🍔 Browse Food Menu", use_container_width=True):
                 st.session_state.in_booking_flow = True
-                st.switch_page("pages/05_food.py")
+                st.switch_page("pages/06_food.py")
 
         # Final Confirmation Form
         with st.form("event_booking_form_final"):
@@ -189,7 +189,7 @@ with col2:
                         st.session_state.in_booking_flow = False
                         
                         time.sleep(2)
-                        st.switch_page("pages/03_bookings.py")
+                        st.switch_page("pages/04_bookings.py")
 
 if st.button("← Back"):
-    st.switch_page("pages/01_home.py")
+    st.switch_page("pages/02_home.py")

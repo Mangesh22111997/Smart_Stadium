@@ -3,10 +3,12 @@ Authentication Routes - API endpoints for user and admin authentication
 Integrates with Firebase Realtime Database
 """
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends, Request
 from pydantic import BaseModel, EmailStr
 from typing import Optional, Dict, Any, List
 from app.services.firebase_auth_service import FirebaseAuthService
+from app.utils.auth_middleware import admin_only
+from app.utils.limiter import limiter
 import logging
 
 logger = logging.getLogger(__name__)
@@ -125,7 +127,8 @@ class UserProfileResponse(BaseModel):
 # ============================================================================
 
 @router.post("/signup", response_model=SignUpResponse, status_code=status.HTTP_201_CREATED, tags=["User Auth"])
-async def sign_up(request: SignUpRequest) -> Dict[str, Any]:
+@limiter.limit("3/minute")
+async def sign_up(request: Request, payload: SignUpRequest) -> Dict[str, Any]:
     """
     Register a new user
     
@@ -139,11 +142,11 @@ async def sign_up(request: SignUpRequest) -> Dict[str, Any]:
     """
     try:
         result = FirebaseAuthService.register_user(
-            username=request.username,
-            email=request.email,
-            password=request.password,
-            name=request.name,
-            phone=request.phone
+            username=payload.username,
+            email=payload.email,
+            password=payload.password,
+            name=payload.name,
+            phone=payload.phone
         )
         
         return {
@@ -169,7 +172,8 @@ async def sign_up(request: SignUpRequest) -> Dict[str, Any]:
 
 
 @router.post("/signin", response_model=SignInResponse, status_code=status.HTTP_200_OK, tags=["User Auth"])
-async def sign_in(request: SignInRequest) -> Dict[str, Any]:
+@limiter.limit("5/minute")
+async def sign_in(request: Request, payload: SignInRequest) -> Dict[str, Any]:
     """
     User login
     
@@ -180,8 +184,8 @@ async def sign_in(request: SignInRequest) -> Dict[str, Any]:
     """
     try:
         result = FirebaseAuthService.login_user(
-            username=request.username,
-            password=request.password
+            username=payload.username,
+            password=payload.password
         )
         
         return {
@@ -300,7 +304,8 @@ async def get_user_profile(user_id: str) -> Dict[str, Any]:
 # ============================================================================
 
 @router.post("/admin/signup", response_model=Dict[str, Any], status_code=status.HTTP_201_CREATED, tags=["Admin Auth"])
-async def admin_sign_up(request: AdminSignUpRequest) -> Dict[str, Any]:
+@limiter.limit("3/minute")
+async def admin_sign_up(request: Request, payload: AdminSignUpRequest) -> Dict[str, Any]:
     """
     Register a new admin
     
@@ -315,12 +320,12 @@ async def admin_sign_up(request: AdminSignUpRequest) -> Dict[str, Any]:
     """
     try:
         result = FirebaseAuthService.register_admin(
-            username=request.username,
-            email=request.email,
-            password=request.password,
-            admin_name=request.admin_name,
-            admin_type=request.admin_type,
-            phone=request.phone
+            username=payload.username,
+            email=payload.email,
+            password=payload.password,
+            admin_name=payload.admin_name,
+            admin_type=payload.admin_type,
+            phone=payload.phone
         )
         
         return {
@@ -347,7 +352,8 @@ async def admin_sign_up(request: AdminSignUpRequest) -> Dict[str, Any]:
 
 
 @router.post("/admin/signin", response_model=AdminSignInResponse, status_code=status.HTTP_200_OK, tags=["Admin Auth"])
-async def admin_sign_in(request: SignInRequest) -> Dict[str, Any]:
+@limiter.limit("5/minute")
+async def admin_sign_in(request: Request, payload: SignInRequest) -> Dict[str, Any]:
     """
     Admin login
     
@@ -358,8 +364,8 @@ async def admin_sign_in(request: SignInRequest) -> Dict[str, Any]:
     """
     try:
         result = FirebaseAuthService.admin_login(
-            username=request.username,
-            password=request.password
+            username=payload.username,
+            password=payload.password
         )
         
         return {
@@ -388,7 +394,8 @@ async def admin_sign_in(request: SignInRequest) -> Dict[str, Any]:
 
 
 @router.post("/security/signin", response_model=Dict[str, Any], status_code=status.HTTP_200_OK, tags=["Security Auth"])
-async def security_sign_in(request: SignInRequest) -> Dict[str, Any]:
+@limiter.limit("5/minute")
+async def security_sign_in(request: Request, payload: SignInRequest) -> Dict[str, Any]:
     """
     Security staff login
     
@@ -399,8 +406,8 @@ async def security_sign_in(request: SignInRequest) -> Dict[str, Any]:
     """
     try:
         result = FirebaseAuthService.security_login(
-            username=request.username,
-            password=request.password
+            username=payload.username,
+            password=payload.password
         )
         
         return {
@@ -429,26 +436,14 @@ async def security_sign_in(request: SignInRequest) -> Dict[str, Any]:
 
 
 @router.get("/users/all", tags=["Admin Auth"])
-async def get_all_users(session_token: str = None) -> Dict[str, Any]:
+async def get_all_users(
+    current_user: dict = Depends(admin_only)
+) -> Dict[str, Any]:
     """
-    Get all registered users (admin only)
-    
-    - **session_token**: Optional admin session token for verification
-    
-    Returns: List of all users
+    Get all registered users. Admin access required.
     """
     try:
-        # Verify admin session if token provided
-        if session_token:
-            session = FirebaseAuthService.verify_session(session_token)
-            if not session or not session.get("is_admin"):
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Unauthorized - Admin access required"
-                )
-        
         users = FirebaseAuthService.get_all_users()
-        
         return {
             "total": len(users),
             "users": users
